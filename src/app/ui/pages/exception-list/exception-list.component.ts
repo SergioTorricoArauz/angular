@@ -8,6 +8,7 @@ import { NgClass, NgFor, NgIf } from '@angular/common';
 import { NewExceptionDialogComponent } from '../new-exception-dialog/new-exception-dialog.component';
 import { ExceptionService } from '../../../infrastructure/api/exception.service';
 import { MatMenuModule } from '@angular/material/menu';
+import { EditExceptionComponent } from '../edit-exception/edit-exception.component';
 
 interface ExceptionTableItem {
   id: number;
@@ -78,9 +79,20 @@ export class ExceptionListComponent implements OnInit {
     }
   }
 
-  editException(exception: any) {
-    console.log('Editar excepción:', exception);
-    // Aquí puedes abrir un diálogo o hacer lo necesario para editar
+  editException(exception: ExceptionTableItem) {
+    console.log('✏️ Editar excepción:', exception);
+
+    // Abrir modal de edición con los datos de la excepción seleccionada
+    const dialogRef = this.dialog.open(EditExceptionComponent, {
+      width: '450px',
+      data: { id: exception.id },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadExceptions(); // Recargar la lista después de editar
+      }
+    });
   }
 
   openDialog(): void {

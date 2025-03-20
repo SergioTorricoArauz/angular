@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-interface ExceptionReason {
+export interface ExceptionReason {
   id: number;
   title: string;
   description: string;
@@ -32,5 +32,25 @@ export class ExceptionService {
   // Método para eliminar una razón de excepción
   deleteExceptionReason(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  // Actualizar una razón de excepción por ID
+  updateExceptionReason(
+    id: number,
+    data: Partial<ExceptionReason>
+  ): Observable<ExceptionReason> {
+    const url = `${this.apiUrl}/${id}`;
+    console.log(`📝 Actualizando razón de excepción con ID: ${id}`, data);
+
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+    return this.http.put<ExceptionReason>(url, data, { headers });
+  }
+
+  // Obtener una razón de excepción por ID
+  getExceptionReasonById(id: number): Observable<ExceptionReason> {
+    const url = `${this.apiUrl}/${id}`;
+    console.log(`🔍 Obteniendo razón de excepción con ID: ${id} desde ${url}`);
+    return this.http.get<ExceptionReason>(url);
   }
 }

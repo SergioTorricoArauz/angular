@@ -13,6 +13,19 @@ export interface ServiceRequest {
   serviceTypeId: number;
 }
 
+export interface ServiceResponse {
+  id: number;
+  name: string;
+  description: string;
+  status: string;
+  campaignId: number;
+  subCampaign: string;
+  clientId: number;
+  serviceTypeId: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -31,6 +44,14 @@ export class ServicioService {
 
   deleteService(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getServiceById(id: number): Observable<ServiceResponse> {
+    return this.http.get<ServiceResponse>(`${this.apiUrl}/${id}`);
+  }
+
+  updateService(id: number, data: ServiceRequest): Observable<ServiceRequest> {
+    return this.http.put<ServiceRequest>(`${this.apiUrl}/${id}`, data);
   }
 }
 export type { ServicioTableItem };

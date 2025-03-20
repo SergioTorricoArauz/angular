@@ -10,6 +10,17 @@ interface Client {
   status: number;
 }
 
+export interface ClientResponse {
+  id: number;
+  name: string;
+  description: string;
+  address: string;
+  status: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+
 @Injectable({
   providedIn: 'root',
 })
@@ -28,5 +39,18 @@ export class ClienteService {
 
   deleteClient(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getClientById(id: number): Observable<ClientResponse> {
+    return this.http.get<ClientResponse>(`${this.apiUrl}/${id}`);
+  }
+
+  updateClient(id: number, data: Partial<Client>): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}`, {
+      name: data.name,
+      description: data.description,
+      address: data.address,
+      status: data.status,
+    });
   }
 }

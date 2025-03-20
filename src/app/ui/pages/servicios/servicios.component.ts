@@ -16,6 +16,7 @@ import {
   ServicioService,
   ServicioTableItem,
 } from '../../../infrastructure/api/servicio.service';
+import { EditServiceComponent } from '../edit-service/edit-service.component';
 
 @Component({
   selector: 'app-servicios',
@@ -220,10 +221,6 @@ export class ServiciosComponent implements OnInit {
     });
   }
 
-  editarServicio(id: number) {
-    console.log('Editar servicio:', id);
-  }
-
   // ✅ Eliminar un servicio
   eliminarServicio(id: number) {
     if (confirm(`¿Estás seguro de eliminar el servicio con ID ${id}?`)) {
@@ -237,5 +234,21 @@ export class ServiciosComponent implements OnInit {
         }
       );
     }
+  }
+
+  // Método para editar un servicio
+  editarServicio(id: number) {
+    console.log('✏️ Editando servicio con ID:', id);
+
+    const dialogRef = this.dialog.open(EditServiceComponent, {
+      width: '500px',
+      data: { id: id },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadServices(); // Recargar la lista tras la edición
+      }
+    });
   }
 }

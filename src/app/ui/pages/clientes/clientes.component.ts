@@ -15,6 +15,7 @@ import { NuevoClienteComponent } from '../nuevo-cliente/nuevo-cliente.component'
 import { ClienteService } from '../../../infrastructure/api/cliente.service';
 import { ClientI } from '../../../dto/clienti';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { EditClientComponent } from '../edit-client/edit-client.component';
 
 interface ClienteTableItem {
   id: number;
@@ -270,7 +271,19 @@ export class ClientesComponent implements OnInit {
   }
 
   editarCliente(id: number) {
-    console.log('Editar cliente:', id);
+    console.log('✏️ Editar cliente:', id);
+
+    // Abrir el modal de edición con los datos del cliente seleccionado
+    const dialogRef = this.dialog.open(EditClientComponent, {
+      width: '450px',
+      data: { id: id },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadClients(); // Recargar la lista después de editar
+      }
+    });
   }
 
   archivarCliente(id: number) {
