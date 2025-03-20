@@ -1,0 +1,98 @@
+<mat-dialog-content class="container">
+  <h2><mat-icon>group</mat-icon> Edit Rol</h2>
+
+  <!-- Nombre del Rol -->
+  <form [formGroup]="rolForm">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre del Rol *</mat-label>
+      <input matInput formControlName="nombreRol">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Permisos</mat-label>
+      <mat-select formControlName="permisos" multiple>
+        <mat-option *ngFor="let permiso of permisosDisponibles" [value]="permiso">
+          {{ permiso }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Botones -->
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="cerrarDialog()">Cancelar</button>
+      <button mat-raised-button color="primary" type="submit" (click)="guardarRol()">Crear</button>
+    </mat-dialog-actions>
+  </form>
+
+  <!-- Permisos (Usando `mat-select` en lugar de `mat-chip-list`) -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Permisos</mat-label>
+    <mat-select formControlName="permisos" multiple>
+      <mat-option *ngFor="let permiso of permisosDisponibles" [value]="permiso">
+        {{ permiso }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Dependiente -->
+  <h3>10 Usuarios asignados</h3>
+  <div class="dependiente-container">
+    <mat-form-field appearance="outline">
+      <mat-label>Dependiente</mat-label>
+      <mat-select formControlName="dependiente">
+        <mat-option value="Pedro Perez">Pedro Perez</mat-option>
+        <mat-option value="Juan Perez">Juan Perez</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary">+ Añadir</button>
+  </div>
+
+  <!-- Lista de Usuarios Asignados -->
+  <table mat-table [dataSource]="usuariosAsignados" class="mat-elevation-z8">
+
+    <!-- Checkbox -->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef> <mat-checkbox></mat-checkbox> </th>
+      <td mat-cell *matCellDef="let user"> <mat-checkbox></mat-checkbox> </td>
+    </ng-container>
+
+    <!-- Nombre -->
+    <ng-container matColumnDef="nombre">
+      <th mat-header-cell *matHeaderCellDef> Nombre </th>
+      <td mat-cell *matCellDef="let user"> {{ user.nombre }} </td>
+    </ng-container>
+
+    <!-- ID Empleado -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef> ID Empleado </th>
+      <td mat-cell *matCellDef="let user"> {{ user.id }} </td>
+    </ng-container>
+
+    <!-- Tipo de Empleado -->
+    <ng-container matColumnDef="tipo">
+      <th mat-header-cell *matHeaderCellDef> Tipo de Empleado </th>
+      <td mat-cell *matCellDef="let user"> {{ user.tipo }} </td>
+    </ng-container>
+
+    <!-- Acciones -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> </th>
+      <td mat-cell *matCellDef="let user">
+        <button mat-icon-button>
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <!-- Header y filas -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</mat-dialog-content>
+
+<!-- Botones -->
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cerrarDialog()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardarRol()">Crear</button>
+</mat-dialog-actions>

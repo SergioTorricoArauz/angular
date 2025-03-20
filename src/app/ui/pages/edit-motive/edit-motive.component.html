@@ -1,0 +1,26 @@
+<mat-dialog-content class="container">
+  <div class="header">
+    <mat-icon class="icono">work</mat-icon>
+    <h2>Edit Motivo horas extras</h2>
+  </div>
+
+  <form [formGroup]="motivoForm">
+    <!-- Concepto -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Concepto *</mat-label>
+      <input matInput formControlName="concepto" placeholder="Nombre del concepto">
+    </mat-form-field>
+
+    <!-- Descripción -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="descripcion" placeholder="Descripción del concepto"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<!-- Botones -->
+<mat-dialog-actions align="center">
+  <button mat-stroked-button (click)="cerrarDialog()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardarMotivo()">Crear</button>
+</mat-dialog-actions>

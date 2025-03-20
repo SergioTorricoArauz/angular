@@ -1,0 +1,133 @@
+<form [formGroup]="usuarioForm">
+  <h2>Usuario / Editar Usuario</h2>
+
+  <div class="form-grid">
+    <div class="column">
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo de Usuario *</mat-label>
+        <mat-select formControlName="tipoUsuario" (selectionChange)="onTipoUsuarioChange()">
+          <mat-option *ngFor="let tipo of tiposUsuario" [value]="tipo">{{ tipo }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre *</mat-label>
+        <input matInput formControlName="nombre" maxlength="25">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Apellidos *</mat-label>
+        <input matInput formControlName="apellidos" maxlength="35">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Genero *</mat-label>
+        <mat-select formControlName="sexo">
+          <mat-option value="Hombre">Hombre</mat-option>
+          <mat-option value="Mujer">Mujer</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha de Nacimiento</mat-label>
+        <input matInput [matDatepicker]="pickerNacimiento" formControlName="fechaNacimiento">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerNacimiento"></mat-datepicker-toggle>
+        <mat-datepicker #pickerNacimiento></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Correo electrónico *</mat-label>
+        <input matInput type="email" formControlName="correo">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Teléfono</mat-label>
+        <input matInput formControlName="telefono">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Dirección</mat-label>
+        <input matInput formControlName="direccion">
+      </mat-form-field>
+    </div>
+
+    <div class="column">
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha de Alta *</mat-label>
+        <input matInput [matDatepicker]="pickerAlta" formControlName="fechaAlta">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerAlta"></mat-datepicker-toggle>
+        <mat-datepicker #pickerAlta></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha de Piso</mat-label>
+        <input matInput [matDatepicker]="pickerPiso" formControlName="fechaPiso">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerPiso"></mat-datepicker-toggle>
+        <mat-datepicker #pickerPiso></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha de Baja</mat-label>
+        <input matInput [matDatepicker]="pickerBaja" formControlName="fechaBaja">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerBaja"></mat-datepicker-toggle>
+        <mat-datepicker #pickerBaja></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Servicio Asociado *</mat-label>
+        <input matInput formControlName="servicioAsociado">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" *ngIf="esOperador || esCoordinador">
+        <mat-label>Supervisor *</mat-label>
+        <input matInput formControlName="supervisor">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" *ngIf="esOperador">
+        <mat-label>Coordinador *</mat-label>
+        <input matInput formControlName="coordinador">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" *ngIf="esSupervisor || esCoordinador">
+        <mat-label>Dependientes</mat-label>
+        <input matInput formControlName="dependientes">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Usuario Win Conecta</mat-label>
+        <input matInput formControlName="usuarioWinConecta">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Usuario Win Cliente</mat-label>
+        <input matInput formControlName="usuarioWinCliente">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>EH</mat-label>
+        <input matInput formControlName="eh">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>ID Avaya</mat-label>
+        <input matInput formControlName="idAvaya">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Usuario Orion</mat-label>
+        <input matInput formControlName="usuarioOrion">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Usuario RRSS</mat-label>
+        <input matInput formControlName="usuarioRrss">
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button mat-raised-button color="warn">Archivar Usuario</button>
+    <button mat-raised-button color="primary" (click)="guardarUsuario()">Guardar</button>
+  </div>
+</form>
+

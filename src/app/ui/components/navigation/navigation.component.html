@@ -1,0 +1,62 @@
+<div class="navigation">
+  <div class="time">
+    <mat-icon class="clock-icon">schedule</mat-icon>
+    <h1>JUEVES</h1>
+    <h2>17:00</h2>
+    <p>05 DE MAYO</p>
+  </div>
+
+  <p class="section-title">PANEL DE CONTROL</p>
+  <ul>
+    <li [class.active]="activeRoute === 'home'" (click)="setActive('home')">
+      <mat-icon>home</mat-icon>
+      <a [routerLink]="['home']">Home</a>
+    </li>
+
+    <li [class.active]="activeRoute === 'programacion'" (click)="setActive('programacion')">
+      <mat-icon>event</mat-icon>
+      <a [routerLink]="['programacion']">Programación</a>
+    </li>
+
+    <li [class.active]="activeRoute === 'user-list'" (click)="setActive('user-list')">
+      <mat-icon>people</mat-icon>
+      <a [routerLink]="['user-list']">Usuarios</a>
+    </li>
+
+    <li [class.active]="activeRoute === 'hora-extra'" (click)="setActive('hora-extra')">
+      <mat-icon>alarm</mat-icon>
+      <a [routerLink]="['hora-extra']">Motivos horas extras</a>
+    </li>
+
+    <li [class.active]="activeRoute === 'rol-permiso'" (click)="setActive('rol-permiso')">
+      <mat-icon>grid_view</mat-icon>
+      <a [routerLink]="['rol-permiso']">Roles y Permisos</a>
+    </li>
+
+    <li [class.active]="activeRoute === 'client-list'" (click)="setActive('client-list')">
+      <mat-icon>grid_view</mat-icon>
+      <a [routerLink]="['client-list']">Cliente</a>
+    </li>
+
+    <li [class.active]="activeRoute === 'service-list'" (click)="setActive('service-list')">
+      <mat-icon>grid_view</mat-icon>
+      <a [routerLink]="['service-list']">Servicios</a>
+    </li>
+
+    <li [class.active]="activeRoute === 'excepciones-list'" (click)="setActive('excepciones-list')">
+      <mat-icon>grid_view</mat-icon>
+      <a [routerLink]="['excepciones-list']">Excepciones</a>
+    </li>
+
+  </ul>
+
+  <hr />
+
+  <p class="section-title">PERFIL</p>
+  <ul>
+    <li [class.active]="activeRoute === 'configuracion'" (click)="setActive('configuracion')">
+      <mat-icon>person</mat-icon>
+      <a [routerLink]="['configuracion']">Configuración</a>
+    </li>
+  </ul>
+</div>

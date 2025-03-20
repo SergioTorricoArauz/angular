@@ -1,0 +1,116 @@
+<div class="container">
+  <h2>Roles y Permisos</h2>
+
+  <!-- Filtros -->
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Roles</mat-label>
+      <mat-select>
+        <mat-option value="activo">Activo</mat-option>
+        <mat-option value="inactivo">Inactivo</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Estado</mat-label>
+      <mat-select>
+        <mat-option value="activo">Activo</mat-option>
+        <mat-option value="inactivo">Inactivo</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Permisos</mat-label>
+      <mat-select>
+        <mat-option value="">---</mat-option>
+        <mat-option value="crear">Crear</mat-option>
+        <mat-option value="editar">Editar</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary">
+      <mat-icon>filter_list</mat-icon> Filtro
+    </button>
+
+    <button mat-raised-button style="background-color: #f57c00; color: white;" (click)="abrirModal()">
+      <mat-icon>add</mat-icon> Nuevo Rol
+    </button>
+  </div>
+
+  <!-- Tabla -->
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <!-- Checkbox -->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox></mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-checkbox></mat-checkbox>
+      </td>
+    </ng-container>
+
+    <!-- Fecha de Creación -->
+    <ng-container matColumnDef="fechaCreacion">
+      <th mat-header-cell *matHeaderCellDef> Fecha de Creación </th>
+      <td mat-cell *matCellDef="let element"> {{ element.fecha }} </td>
+    </ng-container>
+
+    <!-- Nombre del Rol -->
+    <ng-container matColumnDef="nombreRol">
+      <th mat-header-cell *matHeaderCellDef> Nombre del Rol </th>
+      <td mat-cell *matCellDef="let element"> {{ element.nombre }} </td>
+    </ng-container>
+
+    <!-- Permisos -->
+    <ng-container matColumnDef="permisos">
+      <th mat-header-cell *matHeaderCellDef> Permisos </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-chip *ngFor="let permiso of element.permisos" color="primary">
+          {{ permiso }}
+        </mat-chip>
+      </td>
+    </ng-container>
+
+    <!-- Usuarios Asignados -->
+    <ng-container matColumnDef="usuarios">
+      <th mat-header-cell *matHeaderCellDef> Usuarios asignados </th>
+      <td mat-cell *matCellDef="let element">
+        <span *ngFor="let usuario of element.usuarios">
+          {{ usuario }}
+        </span>
+      </td>
+    </ng-container>
+
+    <!-- Estado -->
+    <ng-container matColumnDef="estado">
+      <th mat-header-cell *matHeaderCellDef> Estado </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-chip [color]="element.estado === 'Active' ? 'primary' : 'warn'">
+          {{ element.estado }}
+        </mat-chip>
+      </td>
+    </ng-container>
+
+    <!-- Acciones -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="redictionEdit(element.id)">Editar</button>
+          <button mat-menu-item>Eliminar</button>
+        </mat-menu>
+      </td>
+    </ng-container>
+
+    <!-- Header y filas -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <!-- Paginador -->
+  <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+</div>

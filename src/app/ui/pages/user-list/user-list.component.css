@@ -1,0 +1,72 @@
+.container {
+  width: 95%;
+  margin: auto;
+  font-family: 'Roboto', sans-serif;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-field {
+  flex: 1;
+  min-width: 250px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge {
+  background: #ddd;
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+
+mat-table {
+  width: 100%;
+  margin-top: 10px;
+}
+
+mat-form-field {
+  width: 200px;
+}
+
+mat-chip {
+  font-size: 14px;
+  padding: 5px;
+}
+
+.botom-save {
+}
+.mat-mdc-table {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+a {
+  text-decoration: none;
+  color: white;
+}

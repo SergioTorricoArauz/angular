@@ -1,0 +1,36 @@
+<div class="login-container">
+  <div class="left-side">
+    <img class="imagen-logo" src="assets/img/logo-conecta-2022-white-e1653084471172.png" alt="Logo de Conecta TH">
+  </div>
+  <div class="left-side">
+    <img class="image-principal" src="assets/img/Nuevo-proyecto-12-768x512.png" alt="Logo de Conecta TH">
+  </div>
+  <div class="right-side">
+    <mat-card class="login-card">
+      <div class="title">
+        <p>Bienvenido a Conecta TH</p>
+        <h1>Inicia Sesión</h1>
+      </div>
+      <form class="div-container-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre de usuario o correo</mat-label>
+          <input matInput formControlName="username">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput type="password" formControlName="password">
+        </mat-form-field>
+        <div class="actions">
+          <div class="pass-actions">
+            <a routerLink = '/recuperar-pass'>Olvidé mi contraseña</a>
+          </div>
+          <div class="button-ingresar">
+            <button mat-raised-button class="login-button" type="submit">Ingresar</button>
+          </div>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+
+</div>
+<div class="bottom-container"></div>

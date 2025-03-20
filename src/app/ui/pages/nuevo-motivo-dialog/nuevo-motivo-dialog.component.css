@@ -1,0 +1,27 @@
+.container {
+  width: 90%;
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.icono {
+  font-size: 30px;
+  color: #ff4081;
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-dialog-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}

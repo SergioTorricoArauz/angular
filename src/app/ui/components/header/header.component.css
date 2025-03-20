@@ -1,0 +1,87 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #DDDDDD;
+  padding: 15px 25px; /* Más espaciado */
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.time {
+  display: flex;
+  flex-direction: column;
+}
+
+.time h1 {
+  font-size: 24px; /* Tamaño más grande */
+  margin: 0;
+}
+
+.time h2 {
+  font-size: 48px;
+  margin: 0;
+}
+
+.time p {
+  font-size: 16px;
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Más separación entre elementos */
+}
+
+.controls button {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.controls button:hover {
+  background-color: #f0f0f0;
+}
+
+.avatar {
+  width: 50px; /* Tamaño más grande */
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #ccc; /* Borde para destacar */
+}
+
+.play-btn, .pause-btn, .stop-btn {
+  padding-left: 30px;
+  font-size: 25px;
+}
+
+.stop-btn {
+  color: red;
+}
+
+.control-boton {
+  display: flex;
+  position: relative;
+  right: 1000px;
+}
+
+.timer-ingreso {
+  display: flex;
+  position: relative;
+  right: 900px;
+}
+
+.timer-income {
+  font-size: 25px;
+  font-family: "Roboto Light", sans-serif;
+}
+
+.image-notification {
+  width: 40px;
+  font-size: 12px;
+}
