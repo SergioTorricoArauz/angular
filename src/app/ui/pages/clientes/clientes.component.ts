@@ -16,6 +16,7 @@ import { ClienteService } from '../../../infrastructure/api/cliente.service';
 import { ClientI } from '../../../dto/clienti';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { EditClientComponent } from '../edit-client/edit-client.component';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 interface ClienteTableItem {
   id: number;
@@ -265,8 +266,20 @@ export class ClientesComponent implements OnInit {
 
   abrirModalNuevoCliente() {
     const dialogRef = this.dialog.open(NuevoClienteComponent);
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) this.loadClients();
+
+    dialogRef.afterClosed().subscribe((nombreCliente) => {
+      if (nombreCliente) {
+        this.loadClients(); // Recargar la lista después de agregar un cliente
+
+        // Mostrar la ventana de éxito
+        this.dialog.open(ConfirmDialogComponent, {
+          width: '400px',
+          data: {
+            title: 'Cliente Creado',
+            message: `El cliente "${nombreCliente}" ha sido agregado con éxito.`,
+          },
+        });
+      }
     });
   }
 
@@ -279,9 +292,19 @@ export class ClientesComponent implements OnInit {
       data: { id: id },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+    dialogRef.afterClosed().subscribe((nombreCliente) => {
+      if (nombreCliente) {
+        // Si se recibe un nombre, significa que se editó correctamente
         this.loadClients(); // Recargar la lista después de editar
+
+        // Mostrar la ventana de confirmación con el nombre del cliente
+        this.dialog.open(ConfirmDialogComponent, {
+          width: '400px',
+          data: {
+            title: 'Cliente Actualizado',
+            message: `El cliente "${nombreCliente}" ha sido actualizado con éxito.`,
+          },
+        });
       }
     });
   }
@@ -296,6 +319,15 @@ export class ClientesComponent implements OnInit {
         () => {
           console.log(`✅ Cliente con ID ${id} eliminado correctamente.`);
           this.loadClients(); // Recargar la lista después de eliminar
+
+          // Mostrar la ventana de éxito
+          this.dialog.open(ConfirmDialogComponent, {
+            width: '400px',
+            data: {
+              title: 'Cliente Eliminado',
+              message: 'El cliente ha sido eliminado con éxito.',
+            },
+          });
         },
         (error) => {
           console.error('❌ Error al eliminar cliente:', error);

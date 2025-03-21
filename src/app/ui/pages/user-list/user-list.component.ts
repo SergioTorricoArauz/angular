@@ -275,7 +275,7 @@ export class UserListComponent implements OnInit {
   }
 
   addUser() {
-    console.log('Añadiendo nuevo usuario...');
+    this._router.navigate(['main-page/user-stepper']);
   }
 
   redirectionEdit(id: number) {

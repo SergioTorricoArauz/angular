@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -8,9 +14,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
-import {EditRoleComponent} from '../edit-role/edit-role.component';
-import {MatDialog} from '@angular/material/dialog';
-import {NuevoRolDialogComponent} from '../nuevo-rol-dialog/nuevo-rol-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { NuevoRolDialogComponent } from '../nuevo-rol-dialog/nuevo-rol-dialog.component';
+import { Router } from '@angular/router';
+import {
+  UserService,
+  UserCreateRequest,
+} from '../../../infrastructure/api/usuario.service';
 
 @Component({
   selector: 'app-crear-usuario',
@@ -24,33 +34,54 @@ import {NuevoRolDialogComponent} from '../nuevo-rol-dialog/nuevo-rol-dialog.comp
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   templateUrl: './app-crear-usuario.component.html',
-  styleUrls: ['./app-crear-usuario.component.css']
+  styleUrls: ['./app-crear-usuario.component.css'],
 })
 export class AppCrearUsuarioComponent {
+  constructor(
+    private dialog: MatDialog,
+    private userService: UserService,
+    private router: Router
+  ) {}
 
-  constructor(private dialog: MatDialog) {
-  }
   tiposUsuario = ['Operador', 'Coordinador', 'Workforce', 'Supervisor'];
   esOperador = false;
   esCoordinador = false;
   esSupervisor = false;
 
   usuarioForm = new FormGroup({
-    tipoUsuario: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
-    nombre: new FormControl<string>('', { validators: [Validators.required, this.nombreValido], nonNullable: true }),
-    apellidos: new FormControl<string>('', { validators: [Validators.required, this.nombreValido], nonNullable: true }),
-    sexo: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
+    tipoUsuario: new FormControl<string>('', {
+      validators: [Validators.required],
+      nonNullable: true,
+    }),
+    nombre: new FormControl<string>('', {
+      validators: [Validators.required, this.nombreValido],
+      nonNullable: true,
+    }),
+    apellidos: new FormControl<string>('', {
+      validators: [Validators.required, this.nombreValido],
+      nonNullable: true,
+    }),
+    sexo: new FormControl<string>('', {
+      validators: [Validators.required],
+      nonNullable: true,
+    }),
     fechaNacimiento: new FormControl<Date | null>(null),
-    correo: new FormControl<string>('', { validators: [Validators.required, Validators.email], nonNullable: true }),
+    correo: new FormControl<string>('', {
+      validators: [Validators.required, Validators.email],
+      nonNullable: true,
+    }),
     telefono: new FormControl<string>(''),
     direccion: new FormControl<string>(''),
     fechaAlta: new FormControl<Date | null>(null, Validators.required),
     fechaPiso: new FormControl<Date | null>(null),
     fechaBaja: new FormControl<Date | null>(null),
-    servicioAsociado: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
+    servicioAsociado: new FormControl<string>('', {
+      validators: [Validators.required],
+      nonNullable: true,
+    }),
     supervisor: new FormControl<string>(''),
     coordinador: new FormControl<string>(''),
     dependientes: new FormControl<string>(''),
@@ -59,7 +90,7 @@ export class AppCrearUsuarioComponent {
     eh: new FormControl<string>(''),
     idAvaya: new FormControl<string>(''),
     usuarioOrion: new FormControl<string>(''),
-    usuarioRrss: new FormControl<string>('')
+    usuarioRrss: new FormControl<string>(''),
   });
 
   nombreValido(control: AbstractControl): ValidationErrors | null {
@@ -77,21 +108,84 @@ export class AppCrearUsuarioComponent {
     this.esSupervisor = tipo === 'Supervisor';
   }
 
+  // ✅ Nuevo método que envía los datos al servicio
   guardarUsuario() {
     if (this.usuarioForm.valid) {
-      console.log('Usuario guardado:', this.usuarioForm.value);
+      const nuevoUsuario: UserCreateRequest = {
+        type: this.getUserType(
+          this.usuarioForm.get('tipoUsuario')?.value || ''
+        ),
+        firstname: this.usuarioForm.get('nombre')?.value || '',
+        lastname: this.usuarioForm.get('apellidos')?.value || '',
+        email: this.usuarioForm.get('correo')?.value || '',
+        status: 1, // Activo por defecto
+        gender: this.usuarioForm.get('sexo')?.value || '',
+        bornAt:
+          this.usuarioForm
+            .get('fechaNacimiento')
+            ?.value?.toISOString()
+            .split('T')[0] || '',
+        country: 'España', // Asumimos por defecto
+        phone: this.usuarioForm.get('telefono')?.value || '',
+        address: this.usuarioForm.get('direccion')?.value || '',
+        collaboratorId: 0,
+        serviceAssociated:
+          Number(this.usuarioForm.get('servicioAsociado')?.value) || 0,
+        coordinatorId: Number(this.usuarioForm.get('coordinador')?.value) || 0,
+        supervisorId: Number(this.usuarioForm.get('supervisor')?.value) || 0,
+        systemId: 0,
+        modeWork: 0,
+        winUsernameConecta:
+          this.usuarioForm.get('usuarioWinConecta')?.value || '',
+        winUsernameClient:
+          this.usuarioForm.get('usuarioWinCliente')?.value || '',
+        eh: this.usuarioForm.get('eh')?.value || '',
+        avayaId: Number(this.usuarioForm.get('idAvaya')?.value) || 0,
+        orionUsername: this.usuarioForm.get('usuarioOrion')?.value || '',
+        rrssUsername: this.usuarioForm.get('usuarioRrss')?.value || '',
+        serialComputer: 'N/A',
+        serialMonitor: 'N/A',
+      };
+
+      this.userService.createUser(nuevoUsuario).subscribe({
+        next: (response) => {
+          console.log('✅ Usuario creado correctamente:', response);
+          alert('Usuario creado exitosamente');
+
+          this.usuarioForm.reset();
+        },
+        error: (error) => {
+          console.error('❌ Error al crear usuario:', error);
+          alert('Error al crear el usuario');
+        },
+      });
     } else {
-      console.warn('Formulario inválido. Por favor, completa los campos requeridos.');
+      console.warn(
+        '⚠️ Formulario inválido. Por favor, completa los campos requeridos.'
+      );
     }
+  }
+
+  // ✅ Método auxiliar para convertir tipos de usuario a números
+  // ✅ Método auxiliar para convertir tipos de usuario a números
+  getUserType(tipo: string): number {
+    const tipos = {
+      Operador: 1,
+      Coordinador: 2,
+      Workforce: 3,
+      Supervisor: 4,
+    } as const;
+
+    return tipos[tipo as keyof typeof tipos] || 0;
   }
 
   redictionEdit() {
     const dialogRef = this.dialog.open(NuevoRolDialogComponent, {
-      width: '1000px', // Puedes ajustar el tamaño
-      data: { titulo: 'Nuevo Rol' } // Puedes pasar datos opcionales
+      width: '1000px',
+      data: { titulo: 'Nuevo Rol' },
     });
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       console.log('El modal se cerró con datos:', result);
-    });  }
-
+    });
+  }
 }

@@ -147,7 +147,7 @@ export class NuevoServicioComponent {
     this.servicioService.createService(this.servicio).subscribe(
       (response) => {
         console.log('Servicio guardado:', response);
-        this.dialogRef.close(response);
+        this.dialogRef.close(this.servicio.name);
       },
       (error) => {
         console.error('Error al guardar servicio:', error);

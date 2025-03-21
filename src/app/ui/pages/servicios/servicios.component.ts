@@ -17,6 +17,7 @@ import {
   ServicioTableItem,
 } from '../../../infrastructure/api/servicio.service';
 import { EditServiceComponent } from '../edit-service/edit-service.component';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-servicios',
@@ -214,40 +215,78 @@ export class ServiciosComponent implements OnInit {
     const dialogRef = this.dialog.open(NuevoServicioComponent, {
       width: '400px',
     });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadServices();
+
+    dialogRef.afterClosed().subscribe((nombreServicio) => {
+      if (nombreServicio) {
+        // Si hay un nombre, significa que se creó correctamente
+        this.loadServices(); // Recargar la lista de servicios
+
+        // Mostrar el modal de confirmación con el nombre del servicio creado
+        this.dialog.open(ConfirmDialogComponent, {
+          width: '400px',
+          data: {
+            title: 'Servicio Creado',
+            message: `El servicio "${nombreServicio}" ha sido creado con éxito.`,
+          },
+        });
       }
     });
   }
 
   // ✅ Eliminar un servicio
   eliminarServicio(id: number) {
-    if (confirm(`¿Estás seguro de eliminar el servicio con ID ${id}?`)) {
-      this.servicioService.deleteService(id).subscribe(
-        () => {
-          console.log(`✅ Servicio con ID ${id} eliminado.`);
-          this.loadServices(); // Recargar la lista
-        },
-        (error) => {
-          console.error('❌ Error al eliminar servicio:', error);
-        }
-      );
-    }
+    // Primero obtener el servicio para obtener su nombre
+    this.servicioService.getServiceById(id).subscribe((servicio) => {
+      const nombreServicio = servicio.name; // Guardar el nombre del servicio
+
+      if (
+        confirm(`¿Estás seguro de eliminar el servicio "${nombreServicio}"?`)
+      ) {
+        this.servicioService.deleteService(id).subscribe(
+          () => {
+            console.log(`✅ Servicio "${nombreServicio}" eliminado.`);
+            this.loadServices(); // Recargar la lista
+
+            // Mostrar la ventana de éxito con el nombre del servicio eliminado
+            this.dialog.open(ConfirmDialogComponent, {
+              width: '400px',
+              data: {
+                title: 'Servicio Eliminado',
+                message: `El servicio "${nombreServicio}" ha sido eliminado correctamente.`,
+              },
+            });
+          },
+          (error) => {
+            console.error('❌ Error al eliminar servicio:', error);
+          }
+        );
+      }
+    });
   }
 
   // Método para editar un servicio
   editarServicio(id: number) {
-    console.log('✏️ Editando servicio con ID:', id);
+    console.log('✏️ Editar servicio:', id);
 
+    // Abrir el modal de edición con los datos del servicio seleccionado
     const dialogRef = this.dialog.open(EditServiceComponent, {
-      width: '500px',
+      width: '450px',
       data: { id: id },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadServices(); // Recargar la lista tras la edición
+    dialogRef.afterClosed().subscribe((nombreServicio) => {
+      if (nombreServicio) {
+        // Si hay un nombre, significa que se editó correctamente
+        this.loadServices(); // Recargar la lista después de editar
+
+        // Mostrar la ventana de confirmación con el nombre del servicio
+        this.dialog.open(ConfirmDialogComponent, {
+          width: '400px',
+          data: {
+            title: 'Servicio Actualizado',
+            message: `El servicio "${nombreServicio}" ha sido actualizado con éxito.`,
+          },
+        });
       }
     });
   }

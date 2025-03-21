@@ -61,7 +61,9 @@ import {
         </mat-form-field>
 
         <div class="buttons">
-          <button mat-button (click)="closeDialog()">Cancelar</button>
+          <button mat-button type="button" (click)="closeDialog()">
+            Cancelar
+          </button>
           <button mat-raised-button color="primary" type="submit">
             Guardar
           </button>
@@ -108,20 +110,32 @@ export class EditClientComponent implements OnInit {
   }
 
   loadClient(id: number) {
-    this.clienteService.getClientById(id).subscribe((res) => {
-      this.client = res;
+    this.clienteService.getClientById(id).subscribe({
+      next: (res) => {
+        this.client = { ...res }; // Asegurar que los datos se carguen correctamente
+      },
+      error: (err) => {
+        console.error('Error al cargar el cliente:', err);
+      },
     });
   }
 
   updateClient() {
-    this.clienteService
-      .updateClient(this.data.id, this.client)
-      .subscribe(() => {
-        this.closeDialog();
-      });
+    if (!this.client.name || !this.client.description || !this.client.address) {
+      return; // Evita enviar datos inválidos
+    }
+
+    this.clienteService.updateClient(this.data.id, this.client).subscribe({
+      next: () => {
+        this.closeDialog(this.client.name); // Enviar el nombre del cliente actualizado
+      },
+      error: (err) => {
+        console.error('Error al actualizar el cliente:', err);
+      },
+    });
   }
 
-  closeDialog() {
-    this.dialogRef.close(true); // Cierra el modal y devuelve un resultado para actualizar la lista
+  closeDialog(nombreCliente?: string) {
+    this.dialogRef.close(nombreCliente); // Enviar el nombre del cliente al cerrar el modal
   }
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 // Importar correctamente los módulos de Angular Material
@@ -95,8 +95,8 @@ export class NewExceptionDialogComponent {
 
   constructor(
     private fb: FormBuilder,
-    private dialog: MatDialog,
-    private exceptionReasonService: ExceptionService
+    private exceptionReasonService: ExceptionService,
+    private dialogRef: MatDialogRef<NewExceptionDialogComponent> // 👈 CAMBIA ESTO
   ) {
     this.form = this.fb.group({
       title: ['', Validators.required],
@@ -105,8 +105,8 @@ export class NewExceptionDialogComponent {
     });
   }
 
-  close(): void {
-    this.dialog.closeAll();
+  close(nombreExcepcion?: string): void {
+    this.dialogRef.close(nombreExcepcion); // 👈 Cierra el modal y envía el dato
   }
 
   create(): void {
@@ -115,11 +115,11 @@ export class NewExceptionDialogComponent {
         .createExceptionReason(this.form.value)
         .subscribe(
           (response) => {
-            console.log('Excepción creada:', response);
-            this.close();
+            console.log('✅ Excepción creada:', response);
+            this.close(response.title); // 👈 Enviar el nombre al componente padre
           },
           (error) => {
-            console.error('Error al crear excepción:', error);
+            console.error('❌ Error al crear excepción:', error);
           }
         );
     }

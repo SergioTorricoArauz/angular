@@ -145,14 +145,17 @@ export class EditServiceComponent implements OnInit {
   }
 
   updateService() {
-    this.servicioService
-      .updateService(this.data.id, this.service)
-      .subscribe(() => {
-        this.closeDialog();
-      });
+    this.servicioService.updateService(this.data.id, this.service).subscribe(
+      () => {
+        this.closeDialog(this.service.name); // Enviar el nombre del servicio al cerrar
+      },
+      (error) => {
+        console.error('Error al actualizar el servicio:', error);
+      }
+    );
   }
 
-  closeDialog() {
-    this.dialogRef.close();
+  closeDialog(nombreServicio?: string) {
+    this.dialogRef.close(nombreServicio); // Enviar el nombre del servicio al cerrar el modal
   }
 }

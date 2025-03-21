@@ -63,10 +63,12 @@ import {
 })
 export class EditExceptionComponent implements OnInit {
   exception: ExceptionReason = {
-    title: '', description: '', status: 0,
+    title: '',
+    description: '',
+    status: 0,
     id: 0,
     createdAt: '',
-    updatedAt: null
+    updatedAt: null,
   };
 
   constructor(
@@ -90,12 +92,17 @@ export class EditExceptionComponent implements OnInit {
   updateException() {
     this.exceptionService
       .updateExceptionReason(this.data.id, this.exception)
-      .subscribe(() => {
-        this.closeDialog();
-      });
+      .subscribe(
+        () => {
+          this.closeDialog(this.exception.title); // Enviar el nombre de la excepción al cerrar
+        },
+        (error) => {
+          console.error('Error al actualizar la excepción:', error);
+        }
+      );
   }
 
-  closeDialog() {
-    this.dialogRef.close();
+  closeDialog(nombreExcepcion?: string) {
+    this.dialogRef.close(nombreExcepcion); // Enviar el nombre de la excepción al cerrar el modal
   }
 }

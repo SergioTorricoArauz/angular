@@ -113,11 +113,11 @@ export class NuevoClienteComponent {
   crearCliente() {
     this.clienteService.createClient(this.cliente).subscribe(
       (response) => {
-        console.log('Cliente creado:', response);
-        this.dialogRef.close(response);
+        console.log('✅ Cliente creado con éxito:', response);
+        this.dialogRef.close(this.cliente.name); // Enviar solo el nombre del cliente creado
       },
       (error) => {
-        console.error('Error al crear cliente:', error);
+        console.error('❌ Error al crear cliente:', error);
       }
     );
   }

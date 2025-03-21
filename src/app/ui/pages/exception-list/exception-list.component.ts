@@ -9,6 +9,7 @@ import { NewExceptionDialogComponent } from '../new-exception-dialog/new-excepti
 import { ExceptionService } from '../../../infrastructure/api/exception.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { EditExceptionComponent } from '../edit-exception/edit-exception.component';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 interface ExceptionTableItem {
   id: number;
@@ -66,14 +67,25 @@ export class ExceptionListComponent implements OnInit {
   }
 
   deleteException(exception: ExceptionTableItem) {
-    if (confirm(`¿Seguro que deseas eliminar "${exception.type}"?`)) {
+    if (
+      confirm(`¿Estás seguro de eliminar la excepción "${exception.type}"?`)
+    ) {
       this.exceptionService.deleteExceptionReason(exception.id).subscribe(
         () => {
-          console.log(`Excepción "${exception.type}" eliminada correctamente.`);
-          this.loadExceptions(); // Recargar la lista después de eliminar
+          console.log(`✅ Excepción "${exception.type}" eliminada.`);
+          this.loadExceptions(); // Recargar la lista
+
+          // Mostrar la ventana de éxito con el nombre de la excepción eliminada
+          this.dialog.open(ConfirmDialogComponent, {
+            width: '400px',
+            data: {
+              title: 'Excepción Eliminada',
+              message: `La excepción "${exception.type}" ha sido eliminada correctamente.`,
+            },
+          });
         },
         (error) => {
-          console.error('Error al eliminar excepción:', error);
+          console.error('❌ Error al eliminar excepción:', error);
         }
       );
     }
@@ -88,9 +100,19 @@ export class ExceptionListComponent implements OnInit {
       data: { id: exception.id },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+    dialogRef.afterClosed().subscribe((nombreExcepcion) => {
+      if (nombreExcepcion) {
+        // Si hay un nombre, significa que se editó correctamente
         this.loadExceptions(); // Recargar la lista después de editar
+
+        // Mostrar la ventana de confirmación con el nombre de la excepción
+        this.dialog.open(ConfirmDialogComponent, {
+          width: '400px',
+          data: {
+            title: 'Excepción Actualizada',
+            message: `La excepción "${nombreExcepcion}" ha sido actualizada con éxito.`,
+          },
+        });
       }
     });
   }
@@ -98,9 +120,19 @@ export class ExceptionListComponent implements OnInit {
   openDialog(): void {
     const dialogRef = this.dialog.open(NewExceptionDialogComponent);
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadExceptions(); // Recargar datos cuando se cierre el modal
+    dialogRef.afterClosed().subscribe((nombreExcepcion) => {
+      if (nombreExcepcion) {
+        // Si hay un nombre, significa que se creó correctamente
+        this.loadExceptions(); // Recargar la lista de excepciones
+
+        // Mostrar el modal de confirmación con el nombre de la excepción creada
+        this.dialog.open(ConfirmDialogComponent, {
+          width: '400px',
+          data: {
+            title: 'Excepción Creada',
+            message: `La excepción "${nombreExcepcion}" ha sido creada con éxito.`,
+          },
+        });
       }
     });
   }
