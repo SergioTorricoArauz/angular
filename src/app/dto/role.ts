@@ -21,3 +21,8 @@ export interface RoleResponse {
   permissions: Permission[];
   users: User[];
 }
+
+export interface RoleCreate{
+  name: string;
+  status: number;
+}

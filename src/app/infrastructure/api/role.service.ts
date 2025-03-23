@@ -1,33 +1,21 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {RoleRequest, RoleResponse} from '../../dto/role';
+import { RoleCreate, RoleResponse } from '../../dto/role';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RoleService {
-  private readonly apiUrl = '/role';
+  private readonly apiUrl = 'http://localhost:3000/api/Role';
 
   constructor(private http: HttpClient) {}
 
-  getRoles(params: RoleRequest): Observable<RoleResponse[]> {
-    let httpParams = new HttpParams();
-
-    if (params.st !== undefined) {
-      httpParams = httpParams.append('st', params.st.toString());
-    }
-    if (params.nm) {
-      httpParams = httpParams.append('nm', params.nm);
-    }
-    if (params.pr) {
-      httpParams = httpParams.append('pr', params.pr);
-    }
-
-    return this.http.get<RoleResponse[]>(this.apiUrl, { params: httpParams });
+  getRoles(): Observable<RoleCreate[]> {
+    return this.http.get<RoleCreate[]>(this.apiUrl);
   }
 
-  createRole(role: Partial<RoleResponse>): Observable<RoleResponse> {
-    return this.http.post<RoleResponse>(this.apiUrl, role);
+  createRole(role: Partial<RoleCreate>): Observable<RoleCreate> {
+    return this.http.post<RoleCreate>(this.apiUrl, role);
   }
 }

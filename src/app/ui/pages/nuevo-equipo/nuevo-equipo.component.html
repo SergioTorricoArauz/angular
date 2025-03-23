@@ -1,0 +1,33 @@
+<div class="modal-container">
+  <h2>Nuevo Equipo</h2>
+
+  <form (ngSubmit)="guardarEquipo()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre del equipo</mat-label>
+      <input
+        matInput
+        [(ngModel)]="nuevoEquipo.name"
+        name="name"
+        required
+        placeholder="Ej: Equipo A"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción</mat-label>
+      <textarea
+        matInput
+        [(ngModel)]="nuevoEquipo.description"
+        name="description"
+        placeholder="Descripción del equipo"
+      ></textarea>
+    </mat-form-field>
+
+    <div class="buttons">
+      <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+      <button mat-raised-button color="primary" type="submit">
+        Guardar
+      </button>
+    </div>
+  </form>
+</div>
