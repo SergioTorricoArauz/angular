@@ -9,6 +9,10 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { ClienteService } from '../../../infrastructure/api/cliente.service';
+import { ServicioService } from '../../../infrastructure/api/servicio.service';
+import { CampaignService } from '../../../infrastructure/api/campaign.service';
+import { Schedule, ScheduleService } from '../../../infrastructure/api/schedule.service';
 
 @Component({
   selector: 'app-crear-programacion',
@@ -31,37 +35,40 @@ import { MatIconModule } from '@angular/material/icon';
       <h2>Nueva Programación</h2>
       <form class="form-container">
         <div class="column-left">
+          <!-- Cliente -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Cliente</mat-label>
-            <mat-select [(ngModel)]="form.cliente" name="cliente">
-              <mat-option *ngFor="let cliente of clientes" [value]="cliente">{{
-                cliente
-              }}</mat-option>
+            <mat-select [(ngModel)]="form.clienteId" name="cliente">
+              <mat-option *ngFor="let cliente of clientes" [value]="cliente.id">
+                {{ cliente.name }}
+              </mat-option>
             </mat-select>
           </mat-form-field>
 
+          <!-- Campaña -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Campaña</mat-label>
-            <mat-select [(ngModel)]="form.campania" name="campania">
-              <mat-option
-                *ngFor="let campania of campaniasFiltradas"
-                [value]="campania"
-                >{{ campania }}</mat-option
-              >
+            <mat-select [(ngModel)]="form.campaniaId" name="campania">
+              <mat-option *ngFor="let campana of campanas" [value]="campana.id">
+                {{ campana.name }}
+              </mat-option>
             </mat-select>
           </mat-form-field>
 
+          <!-- Servicio -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Servicio</mat-label>
-            <mat-select [(ngModel)]="form.servicio" name="servicio">
+            <mat-select [(ngModel)]="form.servicioId" name="servicio">
               <mat-option
-                *ngFor="let servicio of serviciosFiltrados"
-                [value]="servicio"
-                >{{ servicio }}</mat-option
+                *ngFor="let servicio of servicios"
+                [value]="servicio.id"
               >
+                {{ servicio.name }}
+              </mat-option>
             </mat-select>
           </mat-form-field>
 
+          <!-- Cantidad de horas asociadas -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Cantidad de horas asociadas</mat-label>
             <input
@@ -72,6 +79,7 @@ import { MatIconModule } from '@angular/material/icon';
             />
           </mat-form-field>
 
+          <!-- Operadores hombres -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Operadores Hombres</mat-label>
             <input
@@ -82,19 +90,19 @@ import { MatIconModule } from '@angular/material/icon';
             />
           </mat-form-field>
 
+          <!-- Operadores mujeres -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Operadores Mujeres</mat-label>
             <input
               matInput
               type="number"
-              [(ngModel)]="form.operadoresH"
-              name="operadoresH"
+              [(ngModel)]="form.operadorasM"
+              name="operadorasM"
             />
           </mat-form-field>
         </div>
 
         <div class="column-right">
-          <!-- Nuevo input con horas programadas -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label class="custom-label">Horas Programadas</mat-label>
             <input
@@ -105,16 +113,15 @@ import { MatIconModule } from '@angular/material/icon';
             />
           </mat-form-field>
 
-          <!-- Fecha de inicio hasta fecha fin-->
           <div class="fecha-row">
             <mat-form-field appearance="outline" class="half-width">
               <mat-label>Fecha de inicio</mat-label>
-              <input matInput type="date" />
+              <input matInput type="date" [(ngModel)]="form.fechaInicio" />
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="half-width">
               <mat-label>Fecha de fin</mat-label>
-              <input matInput type="date" />
+              <input matInput type="date" [(ngModel)]="form.fechaFin" />
             </mat-form-field>
           </div>
 
@@ -138,8 +145,9 @@ import { MatIconModule } from '@angular/material/icon';
                 *ngFor="let dia of dias"
                 [(ngModel)]="item.dias[dia]"
                 [name]="'dias_' + dia"
-                >{{ dia }}</mat-checkbox
               >
+                {{ dia }}
+              </mat-checkbox>
             </div>
 
             <h3>Horarios</h3>
@@ -168,7 +176,9 @@ import { MatIconModule } from '@angular/material/icon';
       <div class="acciones">
         <button mat-stroked-button color="warn">Cerrar</button>
         <button mat-raised-button color="primary">Guardar</button>
-        <button mat-raised-button color="accent">Crear Programación</button>
+        <button mat-raised-button color="accent" (click)="crearProgramacion()">
+          Crear Programación
+        </button>
       </div>
     </div>
   `,
@@ -252,42 +262,116 @@ import { MatIconModule } from '@angular/material/icon';
   ],
 })
 export class CrearProgramacionComponent implements OnInit {
-  clientes = ['Cliente A', 'Cliente B'];
-  campaniasFiltradas = ['Campaña 1', 'Campaña 2'];
-  serviciosFiltrados = ['Servicio 1', 'Servicio 2'];
+  clientes: any[] = [];
+  campanas: any[] = [];
+  servicios: any[] = [];
   dias = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
 
   form: any = {
-    cliente: '',
-    campania: '',
-    servicio: '',
+    clienteId: null,
+    campaniaId: null,
+    servicioId: null,
     horas: null,
     operadoresH: null,
-    operadoresM: null,
+    operadorasM: null,
     fechaInicio: null,
     fechaFin: null,
-    dias: {},
-    intervalo: null,
-    horarioDesde: '',
-    horarioHasta: '',
     horasProgramadas: 1824, // Horas programadas
   };
 
-  // Arreglo para manejar los campos adicionales
   camposDisponibilidad: any[] = [
     { dias: {}, horarioDesde: '', horarioHasta: '' },
   ];
 
-  mostrarDisponibilidad = false;
+  constructor(
+    private clienteService: ClienteService,
+    private servicioService: ServicioService,
+    private campaniaService: CampaignService,
+    private scheduleService: ScheduleService // Inyectamos el servicio
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.cargarClientes();
+    this.cargarServicios();
+    this.cargarCampanias();
+  }
 
-  // Método para agregar más campos
+  cargarClientes() {
+    this.clienteService.getClients().subscribe({
+      next: (clientes) => {
+        this.clientes = clientes.map((cliente) => ({
+          id: cliente.id,
+          name: cliente.name,
+        }));
+      },
+      error: (err) => {
+        console.error('Error al cargar los clientes', err);
+      },
+    });
+  }
+
+  cargarServicios() {
+    this.servicioService.getServices().subscribe({
+      next: (servicios) => {
+        this.servicios = servicios.map((servicio) => ({
+          id: servicio.id,
+          name: servicio.name,
+        }));
+      },
+      error: (err) => {
+        console.error('Error al cargar los servicios', err);
+      },
+    });
+  }
+
+  cargarCampanias() {
+    this.campaniaService.getCampaigns().subscribe({
+      next: (campanas) => {
+        this.campanas = campanas.map((campana) => ({
+          id: campana.id,
+          name: campana.name,
+        }));
+      },
+      error: (err) => {
+        console.error('Error al cargar las campañas', err);
+      },
+    });
+  }
+
   agregarCampos() {
     this.camposDisponibilidad.push({
       dias: {},
       horarioDesde: '',
       horarioHasta: '',
+    });
+  }
+
+  crearProgramacion() {
+    const startDate = new Date(this.form.fechaInicio).toISOString(); // Convertimos la fecha de inicio a ISO 8601
+    const endDate = new Date(this.form.fechaFin).toISOString(); // Convertimos la fecha de fin a ISO 8601
+
+    const requestData: Schedule = {
+      name: 'Programación de ejemplo', // Nombre que inventamos
+      description: 'Descripción de la programación', // Descripción inventada
+      status: 'Activo', // Estado inventado
+      campaignId: this.form.campaniaId,
+      clientId: this.form.clienteId,
+      serviceId: this.form.servicioId,
+      hoursAssigned: this.form.horas,
+      operatorsCountMale: this.form.operadoresH,
+      operatorsCountFemale: this.form.operadorasM,
+      serviceTypeId: 1, // Tipo de servicio
+      startAt: startDate, // Fecha de inicio
+      endsAt: endDate, // Fecha de fin
+    };
+
+    this.scheduleService.createSchedule(requestData).subscribe({
+      next: (response) => {
+        console.log('Programación creada con éxito', response);
+      },
+      error: (err) => {
+        console.error('Error al crear la programación', err);
+      },
     });
   }
 }
