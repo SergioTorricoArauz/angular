@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { UserResponse, UserResponses } from '../../dto/user';
 
 // ✅ Interfaz para obtener usuarios (datos reducidos)
 export interface User {
@@ -88,5 +89,9 @@ export class UserService {
         console.log(`✅ Usuario con ID ${id} eliminado correctamente.`);
       })
     );
+  }
+
+  findUser(id: number): Observable<UserResponses> {
+    return this.http.get<UserResponses>(`${this.apiUrl}/${id}`);
   }
 }
