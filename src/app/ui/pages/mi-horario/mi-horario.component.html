@@ -1,0 +1,41 @@
+<div class="schedule-container">
+  <div class="schedule-header">
+    <p><strong>Programaciones activas:</strong> Tigo ATC 611, Servicio secundario</p>
+    <div class="schedule-controls">
+      <button>&lt;</button>
+      <span>10/03/2025 - 16/03/2025</span>
+      <button>&gt;</button>
+    </div>
+  </div>
+
+  <div class="schedule-grid">
+    <div class="grid-header">
+      <div class="hour-cell"></div>
+      <div *ngFor="let day of week" class="day-header">
+        <div>{{ day.day }}</div>
+        <div>{{ day.date }}</div>
+      </div>
+    </div>
+
+    <div class="grid-body">
+      <div class="time-column">
+        <div *ngFor="let hour of hours" class="hour-cell">{{ hour }}</div>
+      </div>
+      <div class="days-columns">
+        <div *ngFor="let day of week" class="day-column">
+          <div *ngFor="let hour of hours" class="grid-cell"></div>
+          <div *ngFor="let event of day.events"
+               class="event"
+               [ngStyle]="{
+                 top: (event.start * cellHeight) + 'px',
+                 height: ((event.end - event.start) * cellHeight) + 'px',
+                 backgroundColor: event.color
+               }">
+            <strong>{{ event.title }}</strong>
+            <div *ngIf="event.time">{{ event.time }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

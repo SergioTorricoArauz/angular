@@ -1,10 +1,47 @@
 <div class="main-page">
-  <app-navigation></app-navigation> <!-- Barra lateral fija -->
+  <app-navigation></app-navigation>
 
   <div class="content">
+    <div class="top-bar">
+      <div class="controls">
+        <button class="icon-button">▶</button>
+        <button class="icon-button">⏸</button>
+        <button class="icon-button">⏹</button>
+        <span class="label">Hora de ingreso:</span>
+        <span class="time">00:00:00</span>
+      </div>
+      <div class="user-info">
+        <div class="notification">
+          🔔<span class="badge">5</span>
+        </div>
+        <div class="user">👤 Operador549-Sc ▼</div>
+      </div>
+    </div>
 
     <div class="page-content">
-      <router-outlet></router-outlet> <!-- Aquí cambia el contenido dinámico -->
+      <router-outlet></router-outlet>
+
+      <div class="dialog-wrapper">
+        <div class="note">
+          Al iniciar la jornada laboral el usuario puede visualizar en qué programación/servicio está trabajando
+        </div>
+
+        <div class="dialog-box">
+          <button class="close-button">&#10005;</button>
+          <p class="dialog-title">¡Bienvenido!</p>
+          <p class="dialog-message">
+            Actualmente estás asignado a una programación del servicio
+          </p>
+          <ul>
+            <li><strong>Tigo ATC 611</strong></li>
+          </ul>
+          <p class="dialog-question">¿Deseas iniciar tu jornada de trabajo?</p>
+          <div class="dialog-actions">
+            <button class="btn-outline">No</button>
+            <button class="btn-primary" (click)="showDialog = false">Sí</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -43,6 +43,16 @@
       <a [routerLink]="['service-list']">Servicios</a>
     </li>
 
+    <li [class.active]="activeRoute === 'gestion-horario'" (click)="setActive('gestion-horario')">
+      <mat-icon>grid_view</mat-icon>
+      <a [routerLink]="['gestion-horario']">Gestion de horarios</a>
+    </li>
+
+        <li [class.active]="activeRoute === 'mi-horario'" (click)="setActive('mi-horario')">
+      <mat-icon>grid_view</mat-icon>
+      <a [routerLink]="['mi-horario']">Mi horario</a>
+    </li>
+
     <li [class.active]="activeRoute === 'excepciones-list'" (click)="setActive('excepciones-list')">
       <mat-icon>grid_view</mat-icon>
       <a [routerLink]="['excepciones-list']">Excepciones</a>
