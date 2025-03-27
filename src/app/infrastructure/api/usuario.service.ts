@@ -94,4 +94,5 @@ export class UserService {
   findUser(id: number): Observable<UserResponses> {
     return this.http.get<UserResponses>(`${this.apiUrl}/${id}`);
   }
+
 }
