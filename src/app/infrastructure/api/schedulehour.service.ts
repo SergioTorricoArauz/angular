@@ -1,9 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {UserResponses} from '../../dto/user';
 
 export interface ScheduleHour {
   id: number;
+  scheduleId: number;
+  daysOfWeek: string;
+  startsTimeAt: string;
+  endsTimeAt: string;
+}
+export interface ScheduleHourCreate {
   scheduleId: number;
   daysOfWeek: string;
   startsTimeAt: string;
@@ -24,5 +31,10 @@ export class ScheduleHourService {
     });
 
     return this.http.get<ScheduleHour[]>(this.apiUrl, { headers });
+  }
+
+
+  createSheduleHour(id: ScheduleHourCreate): Observable<any> {
+    return this.http.post<ScheduleHourCreate>(this.apiUrl, id);
   }
 }

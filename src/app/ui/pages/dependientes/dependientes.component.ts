@@ -15,6 +15,7 @@ import {
   TeamCreateRequest,
 } from '../../../infrastructure/api/dependiente.service';
 import { NuevoEquipoComponent } from '../nuevo-equipo/nuevo-equipo.component';
+import {UserService} from '../../../infrastructure/api/usuario.service';
 
 @Component({
   selector: 'app-dependientes',
@@ -120,19 +121,27 @@ export class DependientesComponent implements OnInit {
 
   displayedColumns: string[] = ['select', 'nombre', 'idEmpleado', 'equipo'];
   dataSource = new MatTableDataSource<{
-    nombre: string;
+    dependiente: string;
     idEmpleado: string;
     equipo: string;
   }>([]);
 
   constructor(
     private dependienteService: DependienteService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private _userService: UserService,
   ) {}
 
   ngOnInit(): void {
     this.loadEquipos();
   }
+
+  getUsers() {
+    this._userService.getUsers().subscribe((apiUsers) => {
+     // this.dataSource = apiUsers;
+    });
+  }
+
 
   abrirModalNuevoEquipo() {
     const dialogRef = this.dialog.open(NuevoEquipoComponent, {

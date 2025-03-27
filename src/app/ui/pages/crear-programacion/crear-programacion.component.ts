@@ -1,18 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { ClienteService } from '../../../infrastructure/api/cliente.service';
-import { ServicioService } from '../../../infrastructure/api/servicio.service';
-import { CampaignService } from '../../../infrastructure/api/campaign.service';
-import { Schedule, ScheduleService } from '../../../infrastructure/api/schedule.service';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {ClienteService} from '../../../infrastructure/api/cliente.service';
+import {ServicioService} from '../../../infrastructure/api/servicio.service';
+import {CampaignService} from '../../../infrastructure/api/campaign.service';
+import {Schedule, ScheduleService} from '../../../infrastructure/api/schedule.service';
+import {ScheduleHourCreate, ScheduleHourService} from '../../../infrastructure/api/schedulehour.service';
+import {Route, Router} from '@angular/router';
 
 @Component({
   selector: 'app-crear-programacion',
@@ -116,12 +118,12 @@ import { Schedule, ScheduleService } from '../../../infrastructure/api/schedule.
           <div class="fecha-row">
             <mat-form-field appearance="outline" class="half-width">
               <mat-label>Fecha de inicio</mat-label>
-              <input matInput type="date" [(ngModel)]="form.fechaInicio" />
+              <input matInput type="date" [(ngModel)]="form.fechaInicio"/>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="half-width">
               <mat-label>Fecha de fin</mat-label>
-              <input matInput type="date" [(ngModel)]="form.fechaFin" />
+              <input matInput type="date" [(ngModel)]="form.fechaFin"/>
             </mat-form-field>
           </div>
 
@@ -130,7 +132,7 @@ import { Schedule, ScheduleService } from '../../../infrastructure/api/schedule.
               href="javascript:void(0)"
               class="agregar-link"
               (click)="agregarCampos()"
-              >+ Agregar</a
+            >+ Agregar</a
             >
           </div>
 
@@ -175,7 +177,7 @@ import { Schedule, ScheduleService } from '../../../infrastructure/api/schedule.
 
       <div class="acciones">
         <button mat-stroked-button color="warn">Cerrar</button>
-        <button mat-raised-button color="primary">Guardar</button>
+        <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
         <button mat-raised-button color="accent" (click)="crearProgramacion()">
           Crear Programación
         </button>
@@ -192,12 +194,14 @@ import { Schedule, ScheduleService } from '../../../infrastructure/api/schedule.
         max-width: 1200px;
         margin: auto;
       }
+
       .form-container {
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
         gap: 40px;
       }
+
       .column-left,
       .column-right {
         display: flex;
@@ -205,34 +209,42 @@ import { Schedule, ScheduleService } from '../../../infrastructure/api/schedule.
         gap: 15px;
         flex: 1;
       }
+
       .full-width {
         width: 100%;
       }
+
       .horarios-container {
         display: flex;
         flex-direction: column;
         gap: 10px;
       }
+
       .dias {
         display: flex;
         gap: 10px;
         flex-wrap: wrap;
       }
+
       .acciones {
         display: flex;
         gap: 15px;
         justify-content: center;
         margin-top: 20px;
       }
+
       .mat-form-field {
         margin-bottom: 15px;
       }
+
       .mat-checkbox {
         margin-right: 10px;
       }
+
       .agregar-btn {
         align-self: flex-start;
       }
+
       .agregar-link {
         color: #1976d2;
         font-weight: bold;
@@ -240,21 +252,26 @@ import { Schedule, ScheduleService } from '../../../infrastructure/api/schedule.
         margin-top: 15px;
         cursor: pointer;
       }
+
       .agregar-link:hover {
         text-decoration: underline;
       }
+
       .horario-fields {
         display: flex;
         gap: 20px;
       }
+
       .half-width {
         width: 48%;
       }
+
       .fecha-row {
         display: flex;
         gap: 40px;
         margin: 20px 0;
       }
+
       .agregar-link-wrapper {
         margin-left: auto;
       }
@@ -280,15 +297,18 @@ export class CrearProgramacionComponent implements OnInit {
   };
 
   camposDisponibilidad: any[] = [
-    { dias: {}, horarioDesde: '', horarioHasta: '' },
+    {dias: {}, horarioDesde: '', horarioHasta: ''},
   ];
 
   constructor(
     private clienteService: ClienteService,
     private servicioService: ServicioService,
     private campaniaService: CampaignService,
-    private scheduleService: ScheduleService // Inyectamos el servicio
-  ) {}
+    private scheduleService: ScheduleService,
+    private scheduleServiceHour: ScheduleHourService,
+    private route: Router// Inyectamos el servicio
+  ) {
+  }
 
   ngOnInit() {
     this.cargarClientes();
@@ -347,6 +367,14 @@ export class CrearProgramacionComponent implements OnInit {
   }
 
   crearProgramacion() {
+    this.route.navigate(['main-page/asignacion-programacion']);
+
+
+  }
+
+  guardar() {
+    // "
+    // Mapear la clave abreviada al nombre completo
     const startDate = new Date(this.form.fechaInicio).toISOString(); // Convertimos la fecha de inicio a ISO 8601
     const endDate = new Date(this.form.fechaFin).toISOString(); // Convertimos la fecha de fin a ISO 8601
 
@@ -367,6 +395,39 @@ export class CrearProgramacionComponent implements OnInit {
 
     this.scheduleService.createSchedule(requestData).subscribe({
       next: (response) => {
+        if (!response.id) return;
+        const diasMap: any = {
+          Lun: 'Lunes',
+          Mar: 'Martes',
+          Mié: 'Miércoles',
+          Jue: 'Jueves',
+          Vie: 'Viernes',
+          Sáb: 'Sábado',
+          Dom: 'Domingo'
+        };
+        let daysOfWeek;
+        this.camposDisponibilidad.map(campo => {
+          const diasSeleccionados = Object.keys(campo.dias)
+            .filter(dia => campo.dias[dia]) // Filtrar solo los días donde el valor sea true
+            .map(dia => diasMap[dia]);
+          console.log(diasSeleccionados)
+          const resultado = diasSeleccionados.filter(Boolean).join(',');
+          console.log(resultado);
+          daysOfWeek = resultado;
+          console.log(this.camposDisponibilidad, 'campos disponible')
+        })
+        console.log('start time at disponibilidad', this.camposDisponibilidad);
+        if(!daysOfWeek) return;
+        let scheduleCreateHour: ScheduleHourCreate = {
+          scheduleId: response.id,
+          daysOfWeek: daysOfWeek,
+          startsTimeAt: this.camposDisponibilidad[0].horarioDesde,
+          endsTimeAt: this.camposDisponibilidad[0].horarioHasta
+        }
+        console.log('shedule Hr creada con éxito', scheduleCreateHour);
+        this.scheduleServiceHour.createSheduleHour(scheduleCreateHour).subscribe(response => {
+          console.log('shedule Hr creada con éxito', response);
+        })
         console.log('Programación creada con éxito', response);
       },
       error: (err) => {

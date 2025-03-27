@@ -18,6 +18,7 @@ import {ClientesComponent} from './ui/pages/clientes/clientes.component';
 import {ServiciosComponent} from './ui/pages/servicios/servicios.component';
 import {ExceptionListComponent} from './ui/pages/exception-list/exception-list.component';
 import {UserStepperComponent} from './ui/pages/user-stepper/user-stepper.component';
+import {AsignacionComponent} from './ui/pages/asignacion/asignacion.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -39,6 +40,7 @@ export const routes: Routes = [
       { path: 'service-list', component: ServiciosComponent },
       { path: 'user-stepper', component: UserStepperComponent },
       { path: 'excepciones-list', component: ExceptionListComponent },
+      { path: 'asignacion-programacion', component: AsignacionComponent },
       { path: 'edit-user/:id', component: EditUsuarioComponent },
       { path: 'edit-role/:id', component: EditRoleComponent },
       { path: 'edit-motive/:id', component: EditMotiveComponent },

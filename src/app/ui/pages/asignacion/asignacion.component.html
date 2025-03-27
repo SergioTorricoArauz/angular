@@ -1,0 +1,54 @@
+<div class="tabla-scroll">
+  <div class="scroll-wrapper">
+    <!-- Fila superior: días (Lunes, Martes...) -->
+    <table class="mat-elevation-z8 full-width">
+      <thead>
+      <tr>
+        <th class="name-with" rowspan="2">Nombre</th>
+        <th rowspan="2">Género</th>
+        <th rowspan="2">Desde</th>
+        <th rowspan="2">Hasta</th>
+        <ng-container *ngFor="let dia of diasLaborales">
+          <th [attr.colspan]="turnos.length" class="grupo-dia">{{ dia.dia }}</th>
+        </ng-container>
+      </tr>
+      <tr>
+        <ng-container *ngFor="let dia of diasLaborales">
+          <th *ngFor="let turno of turnos">{{ turno }}</th>
+        </ng-container>
+      </tr>
+      </thead>
+    </table>
+
+    <!-- Tabla de datos con mat-table -->
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 full-width">
+
+      <!-- Columnas fijas -->
+      <ng-container matColumnDef="usuario">
+        <td mat-cell *matCellDef="let element">{{ element.usuario }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="sexo">
+        <td mat-cell *matCellDef="let element">{{ element.sexo }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="desde">
+        <td mat-cell *matCellDef="let element">{{ element.desde }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="hasta">
+        <td mat-cell *matCellDef="let element">{{ element.hasta }}</td>
+      </ng-container>
+
+      <!-- Columnas dinámicas -->
+      <ng-container *ngFor="let dia of diasLaborales">
+        <ng-container *ngFor="let turno of turnos" [matColumnDef]="dia.id + '_' + turno">
+          <td mat-cell *matCellDef="let element"></td>
+        </ng-container>
+      </ng-container>
+
+      <!-- Fila de datos -->
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>
