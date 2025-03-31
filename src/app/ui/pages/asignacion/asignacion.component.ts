@@ -1,65 +1,56 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { addDays, format, isWeekend } from 'date-fns';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
-import { addDays, format, isWeekend } from 'date-fns';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  standalone: true,
   selector: 'app-asignacion',
-  imports: [CommonModule, MatTableModule],
+  standalone: true,
+  imports: [CommonModule, MatTableModule, FormsModule],
   templateUrl: './asignacion.component.html',
-  styleUrls: ['./asignacion.component.css']
+  styleUrls: ['./asignacion.component.css'],
 })
-export class AsignacionComponent {
-  fechaInicio = new Date('2019-11-11');
-  fechaFin = new Date('2019-11-30');
+export class AsignacionComponent implements OnInit {
+  @Input() usuarios: any[] = [];
 
-  turnos = ['E1', 'S1', 'E2', 'S2'];
-  diasLaborales: { fecha: Date; dia: string; id: string }[] = [];
+  fechaInicio = new Date('2024-12-01');
+  fechaFin = new Date('2024-12-20');
 
-  displayedColumns: string[] = ['usuario', 'sexo', 'desde', 'hasta'];
-  subColumns: string[] = [];
+  @Input() turnos: any[] = [];
 
-  dataSource = [
-    {
-      usuario: '123-Juan Perez',
-      sexo: 'Masculino',
-      desde: '01/12/2024',
-      hasta: '07/12/2024'
-    },
-    {
-      usuario: 'Añadir usuario',
-      sexo: 'Femenino',
-      desde: '',
-      hasta: ''
-    }
-  ];
-  headerRow1: string[] = ['usuario', 'sexo', 'desde', 'hasta'];
+  diasLaborales: { dia: string; fecha: string; id: string }[] = [];
 
-  constructor() {
+  ngOnInit() {
     this.diasLaborales = this.generarDiasLaborales();
 
-    this.diasLaborales.forEach(dia => {
-      this.turnos.forEach(turno => {
-        const colId = `${dia.id}_${turno}`;
-        this.displayedColumns.push(colId);
-      });
-    });
-
+    // Si los usuarios llegan vacíos o sin turnos inicializados
+    for (let user of this.usuarios) {
+      if (!user.turnos) {
+        user.turnos = this.inicializarTurnos();
+      }
+    }
   }
 
-  generarDiasLaborales(): { fecha: Date; dia: string; id: string }[] {
-    const dias: { fecha: Date; dia: string; id: string }[] = [];
+  getPlaceholder(turno: any): string {
+    console.log(turno);
+    if (turno.code === 'E1') return turno.horaDesde;
+    if (turno.code === 'S1') return turno.HoraFin;
+    return '--:--';
+  }
+
+  generarDiasLaborales() {
+    const dias: { dia: string; fecha: string; id: string }[] = [];
     let actual = new Date(this.fechaInicio);
 
     while (actual <= this.fechaFin) {
-      if (!isWeekend(actual)) {
-        const nombreDia = format(actual, 'EEEE'); // "Monday"
-        const id = format(actual, 'yyyyMMdd'); // 20241111
+      const diaSemana = actual.getDay();
+      if (diaSemana !== 0 && diaSemana !== 6) {
+        const id = format(actual, 'yyyy-MM-dd');
         dias.push({
-          fecha: new Date(actual),
-          dia: `${this.capitalizar(nombreDia)} (${format(actual, 'dd/MM')})`,
-          id: id
+          dia: format(actual, 'EEEE'),
+          fecha: format(actual, 'dd/MM'),
+          id: id,
         });
       }
       actual = addDays(actual, 1);
@@ -68,8 +59,16 @@ export class AsignacionComponent {
     return dias;
   }
 
-
-  capitalizar(texto: string): string {
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  inicializarTurnos() {
+    const turnosPorDia: any = {};
+    for (let dia of this.diasLaborales) {
+      turnosPorDia[dia.id] = {
+        E1: '',
+        S1: '',
+        E2: '',
+        S2: ''
+      };
+    }
+    return turnosPorDia;
   }
 }

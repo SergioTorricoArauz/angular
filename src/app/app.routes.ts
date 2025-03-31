@@ -18,12 +18,9 @@ import {ClientesComponent} from './ui/pages/clientes/clientes.component';
 import {ServiciosComponent} from './ui/pages/servicios/servicios.component';
 import {ExceptionListComponent} from './ui/pages/exception-list/exception-list.component';
 import {UserStepperComponent} from './ui/pages/user-stepper/user-stepper.component';
-<<<<<<< HEAD
 import { GestionHorarioComponent } from './ui/pages/gestion-horario/gestion-horario.component';
 import { MiHorarioComponent } from './ui/pages/mi-horario/mi-horario.component';
-=======
 import {AsignacionComponent} from './ui/pages/asignacion/asignacion.component';
->>>>>>> 14dcf5f805eebd4c663641afed883156dd49e198
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },

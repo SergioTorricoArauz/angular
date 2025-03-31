@@ -15,6 +15,7 @@ import {CampaignService} from '../../../infrastructure/api/campaign.service';
 import {Schedule, ScheduleService} from '../../../infrastructure/api/schedule.service';
 import {ScheduleHourCreate, ScheduleHourService} from '../../../infrastructure/api/schedulehour.service';
 import {Route, Router} from '@angular/router';
+import {AsignacionComponent} from '../asignacion/asignacion.component';
 
 @Component({
   selector: 'app-crear-programacion',
@@ -31,9 +32,10 @@ import {Route, Router} from '@angular/router';
     MatCheckboxModule,
     MatButtonModule,
     MatIconModule,
+    AsignacionComponent,
   ],
   template: `
-    <div class="contenedor">
+    <div class="contenedor" *ngIf="!showAsignacion">
       <h2>Nueva Programación</h2>
       <form class="form-container">
         <div class="column-left">
@@ -183,6 +185,8 @@ import {Route, Router} from '@angular/router';
         </button>
       </div>
     </div>
+    <app-asignacion *ngIf="showAsignacion" [usuarios]="usuarios" [turnos]="turnos"></app-asignacion>
+
   `,
   styles: [
     `
@@ -282,6 +286,9 @@ export class CrearProgramacionComponent implements OnInit {
   clientes: any[] = [];
   campanas: any[] = [];
   servicios: any[] = [];
+  usuarios: any[] = [];
+  turnos: any[] = [];
+  showAsignacion: boolean =false;
   dias = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
 
   form: any = {
@@ -308,6 +315,7 @@ export class CrearProgramacionComponent implements OnInit {
     private scheduleServiceHour: ScheduleHourService,
     private route: Router// Inyectamos el servicio
   ) {
+    this.showAsignacion = false;
   }
 
   ngOnInit() {
@@ -367,8 +375,37 @@ export class CrearProgramacionComponent implements OnInit {
   }
 
   crearProgramacion() {
-    this.route.navigate(['main-page/asignacion-programacion']);
+    const operadoresH = this.form.operadoresH || 0;
+    const operadorasM = this.form.operadorasM || 0;
+    const total = operadoresH + operadorasM;
 
+    const usuarios = [];
+    for (let i = 0; i < operadoresH; i++) {
+      usuarios.push({
+        nombre: `Ingresar Usuario`,
+        sexo: 'Masculino',
+        desde: this.form.fechaInicio,
+        hasta: this.form.fechaFin,
+      });
+    }
+    for (let i = 0; i < operadorasM; i++) {
+      usuarios.push({
+        nombre: `Ingresar Usuario`,
+        sexo: 'Femenino',
+        desde: this.form.fechaInicio,
+        hasta: this.form.fechaFin,
+      });
+    }
+    console.log(usuarios, "usuarios!");
+    this.usuarios = usuarios;
+    this.showAsignacion = true;
+    const turnos = [];
+
+    for (let i = 0; i < this.camposDisponibilidad.length; i++) {
+      turnos.push({ code: `E${i + 1}`, horaDesde: this.camposDisponibilidad[i].horarioDesde, HoraFin: this.camposDisponibilidad[i].horarioHasta });
+      turnos.push({ code: `S${i + 1}`, horaDesde: this.camposDisponibilidad[i].horarioDesde, HoraFin: this.camposDisponibilidad[i].horarioHasta  });
+    }
+    this.turnos = turnos;
 
   }
 
@@ -417,7 +454,7 @@ export class CrearProgramacionComponent implements OnInit {
           console.log(this.camposDisponibilidad, 'campos disponible')
         })
         console.log('start time at disponibilidad', this.camposDisponibilidad);
-        if(!daysOfWeek) return;
+        if (!daysOfWeek) return;
         let scheduleCreateHour: ScheduleHourCreate = {
           scheduleId: response.id,
           daysOfWeek: daysOfWeek,

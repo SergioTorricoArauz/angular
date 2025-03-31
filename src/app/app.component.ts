@@ -6,7 +6,7 @@ import {AsignacionComponent} from './ui/pages/asignacion/asignacion.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MatFormFieldModule, MatInputModule, AsignacionComponent],
+  imports: [RouterOutlet, MatFormFieldModule, MatInputModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

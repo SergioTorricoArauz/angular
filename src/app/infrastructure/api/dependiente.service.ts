@@ -29,7 +29,7 @@ export interface TeamCreateRequest {
   providedIn: 'root',
 })
 export class DependienteService {
-  private readonly apiUrl = 'http://localhost:3000/api/Team';
+  private readonly apiUrl = 'http://localhost:5000/api/Team';
 
   constructor(private http: HttpClient) {}
 
@@ -53,5 +53,15 @@ export class DependienteService {
 
   createEquipo(team: Partial<TeamCreateRequest>): Observable<TeamCreateRequest> {
     return this.http.post<TeamCreateRequest>(this.apiUrl, team);
+  }
+
+  addUserTeam(team: Partial<TeamCreateRequest>): Observable<TeamCreateRequest> {
+    return this.http.post<TeamCreateRequest>(this.apiUrl, team);
+  }
+
+  // ✅ Nuevo método para asignar usuarios a un equipo
+  asignarUsuariosATeam(teamId: number, id: string, userIds: number[]): Observable<any> {
+    const url = `${this.apiUrl}/${id}/users?teamId=${teamId}`;
+    return this.http.post<any>(url, userIds);
   }
 }

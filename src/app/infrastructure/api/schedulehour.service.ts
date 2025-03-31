@@ -21,7 +21,7 @@ export interface ScheduleHourCreate {
   providedIn: 'root',
 })
 export class ScheduleHourService {
-  private apiUrl = 'http://localhost:3000/api/schedulehours';
+  private apiUrl = 'http://localhost:5000/api/schedulehours';
 
   constructor(private http: HttpClient) {}
 

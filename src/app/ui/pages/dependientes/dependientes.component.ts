@@ -15,7 +15,7 @@ import {
   TeamCreateRequest,
 } from '../../../infrastructure/api/dependiente.service';
 import { NuevoEquipoComponent } from '../nuevo-equipo/nuevo-equipo.component';
-import {UserService} from '../../../infrastructure/api/usuario.service';
+import { UserService } from '../../../infrastructure/api/usuario.service';
 
 @Component({
   selector: 'app-dependientes',
@@ -38,9 +38,9 @@ import {UserService} from '../../../infrastructure/api/usuario.service';
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Equipos *</mat-label>
         <mat-select formControlName="equipo">
-          <mat-option *ngFor="let equipo of equipos" [value]="equipo">{{
-            equipo
-          }}</mat-option>
+          <mat-option *ngFor="let equipo of equipos" [value]="equipo">
+            {{ equipo }}
+          </mat-option>
         </mat-select>
       </mat-form-field>
       <button
@@ -52,7 +52,7 @@ import {UserService} from '../../../infrastructure/api/usuario.service';
         Añadir equipo
       </button>
 
-      <h3>10 personas asignadas</h3>
+      <h3>{{ dataSource.data.length }} personas asignadas</h3>
       <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="select">
           <mat-header-cell *matHeaderCellDef></mat-header-cell>
@@ -68,9 +68,9 @@ import {UserService} from '../../../infrastructure/api/usuario.service';
 
         <ng-container matColumnDef="idEmpleado">
           <mat-header-cell *matHeaderCellDef> ID Empleado </mat-header-cell>
-          <mat-cell *matCellDef="let element">{{
-            element.idEmpleado
-          }}</mat-cell>
+          <mat-cell *matCellDef="let element">
+            {{ element.idEmpleado }}
+          </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="equipo">
@@ -121,27 +121,33 @@ export class DependientesComponent implements OnInit {
 
   displayedColumns: string[] = ['select', 'nombre', 'idEmpleado', 'equipo'];
   dataSource = new MatTableDataSource<{
-    dependiente: string;
-    idEmpleado: string;
+    nombre: string;
+    idEmpleado: number;
     equipo: string;
   }>([]);
 
   constructor(
     private dependienteService: DependienteService,
     private dialog: MatDialog,
-    private _userService: UserService,
+    private _userService: UserService
   ) {}
 
   ngOnInit(): void {
     this.loadEquipos();
+    this.getUsers();
   }
 
   getUsers() {
     this._userService.getUsers().subscribe((apiUsers) => {
-     // this.dataSource = apiUsers;
+      const mappedUsers = apiUsers.map((user: any) => ({
+        nombre: `${user.firstname} ${user.lastname}`,
+        idEmpleado: user.id,
+        equipo: 'Sin equipo', // Puedes cambiar esto si hay un campo de equipo
+      }));
+      this.dataSource = new MatTableDataSource(mappedUsers);
+      console.log(mappedUsers, 'Usuarios mapeados para la tabla!');
     });
   }
-
 
   abrirModalNuevoEquipo() {
     const dialogRef = this.dialog.open(NuevoEquipoComponent, {
@@ -181,6 +187,12 @@ export class DependientesComponent implements OnInit {
   }
 
   guardarFormulario() {
+    this.dependienteService
+      .asignarUsuariosATeam(1, '1', [2, 3])
+      .subscribe({
+        next: (res) => console.log('Usuarios asignados correctamente', res),
+        error: (err) => console.error('Error al asignar usuarios', err),
+      });
     console.log('Formulario guardado:', this.equipoForm.value);
   }
 }
