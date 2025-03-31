@@ -12,9 +12,9 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import {
-  ScheduleHourService,
-  ScheduleHour,
-} from '../../../infrastructure/api/schedulehour.service';
+  ScheduleService,
+  Schedule,
+} from '../../../infrastructure/api/schedule.service';
 
 @Component({
   selector: 'app-programacion',
@@ -41,9 +41,7 @@ import {
           <mat-label>Estado</mat-label>
           <mat-select [(ngModel)]="filtro.estado">
             <mat-option value="">Todos</mat-option>
-            <mat-option *ngFor="let estado of estados" [value]="estado">{{
-              estado
-            }}</mat-option>
+            <mat-option *ngFor="let estado of estados" [value]="estado">{{ estado }}</mat-option>
           </mat-select>
         </mat-form-field>
         <button mat-raised-button color="primary" (click)="aplicarFiltro()">
@@ -60,26 +58,22 @@ import {
           <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
           <td mat-cell *matCellDef="let element">{{ element.id }}</td>
         </ng-container>
+
         <ng-container matColumnDef="fechaInicio">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            Fecha Inicio
-          </th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.startTime | date : 'dd/MM/yyyy HH:mm' }}
-          </td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Inicio</th>
+          <td mat-cell *matCellDef="let element">{{ element.startAt | date : 'dd/MM/yyyy HH:mm' }}</td>
         </ng-container>
+
         <ng-container matColumnDef="fechaFin">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Fin</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.endTime | date : 'dd/MM/yyyy HH:mm' }}
-          </td>
+          <td mat-cell *matCellDef="let element">{{ element.endsAt | date : 'dd/MM/yyyy HH:mm' }}</td>
         </ng-container>
+
         <ng-container matColumnDef="estado">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.estado || 'N/A' }}
-          </td>
+          <td mat-cell *matCellDef="let element">{{ element.status || 'N/A' }}</td>
         </ng-container>
+
         <ng-container matColumnDef="acciones">
           <th mat-header-cell *matHeaderCellDef>Acciones</th>
           <td mat-cell *matCellDef="let element">
@@ -87,23 +81,17 @@ import {
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="editarProgramacion(element.id)">
-                Editar
-              </button>
-              <button mat-menu-item (click)="archivarProgramacion(element.id)">
-                Archivar
-              </button>
+              <button mat-menu-item (click)="editarProgramacion(element.id)">Editar</button>
+              <button mat-menu-item (click)="archivarProgramacion(element.id)">Archivar</button>
             </mat-menu>
           </td>
         </ng-container>
+
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
 
-      <mat-paginator
-        [pageSizeOptions]="[5, 10, 20]"
-        showFirstLastButtons
-      ></mat-paginator>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20, 30]" showFirstLastButtons></mat-paginator>
     </div>
   `,
   styles: [
@@ -124,22 +112,9 @@ import {
   ],
 })
 export class ProgramacionComponent implements OnInit {
-  estados = [
-    'NUEVO',
-    'OFERTADO',
-    'ASIGNADO',
-    'INICIADO',
-    'FINALIZADO',
-    'ANULADO',
-  ];
-  displayedColumns: string[] = [
-    'id',
-    'fechaInicio',
-    'fechaFin',
-    'estado',
-    'acciones',
-  ];
-  dataSource = new MatTableDataSource<ScheduleHour>([]);
+  estados = ['NUEVO', 'OFERTADO', 'ASIGNADO', 'INICIADO', 'FINALIZADO', 'ANULADO'];
+  displayedColumns: string[] = ['id', 'fechaInicio', 'fechaFin', 'estado', 'acciones'];
+  dataSource = new MatTableDataSource<Schedule>([]);
   filtro = { estado: '' };
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -147,7 +122,7 @@ export class ProgramacionComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private scheduleHourService: ScheduleHourService
+    private scheduleService: ScheduleService
   ) {}
 
   ngOnInit() {
@@ -155,8 +130,8 @@ export class ProgramacionComponent implements OnInit {
   }
 
   obtenerProgramaciones() {
-    this.scheduleHourService.getScheduleHours().subscribe(
-      (data: ScheduleHour[]) => {
+    this.scheduleService.getSchedules().subscribe(
+      (data: Schedule[]) => {
         console.log('✅ Programaciones obtenidas:', data);
         this.dataSource.data = data;
         this.dataSource.paginator = this.paginator;

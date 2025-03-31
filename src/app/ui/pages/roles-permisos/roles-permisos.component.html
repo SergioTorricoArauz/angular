@@ -101,7 +101,7 @@
         </button>
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="redictionEdit(element.id)">Editar</button>
-          <button mat-menu-item>Eliminar</button>
+          <button mat-menu-item (click)="eliminarRol(element.id)">Eliminar</button>
         </mat-menu>
       </td>
     </ng-container>

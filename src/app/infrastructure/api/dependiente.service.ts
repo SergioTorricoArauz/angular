@@ -21,15 +21,16 @@ export interface DependienteItem {
 }
 
 export interface TeamCreateRequest {
+  id?: number;
   name: string;
-  description: string;
+  description: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class DependienteService {
-  private readonly apiUrl = 'http://localhost:5000/api/Team';
+  private readonly apiUrl = 'http://localhost:3000/api/Team';
 
   constructor(private http: HttpClient) {}
 

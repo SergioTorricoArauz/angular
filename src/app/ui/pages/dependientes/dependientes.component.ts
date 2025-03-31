@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -31,6 +31,7 @@ import { UserService } from '../../../infrastructure/api/usuario.service';
     MatCheckboxModule,
     MatPaginatorModule,
     MatIconModule,
+    FormsModule,
   ],
   template: `
     <div class="container">
@@ -57,7 +58,7 @@ import { UserService } from '../../../infrastructure/api/usuario.service';
         <ng-container matColumnDef="select">
           <mat-header-cell *matHeaderCellDef></mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <mat-checkbox></mat-checkbox>
+            <mat-checkbox [(ngModel)]="element.selected"></mat-checkbox>
           </mat-cell>
         </ng-container>
 
@@ -84,11 +85,15 @@ import { UserService } from '../../../infrastructure/api/usuario.service';
 
       <div class="buttons">
         <button mat-raised-button color="warn">Archivar Usuario</button>
-        <button mat-raised-button color="primary" (click)="guardarFormulario()">
+        <button mat-raised-button color="primary">
           Siguiente
+        </button>
+        <button mat-raised-button color="accent" (click)="onSeleccionar()">
+          Obtener seleccionados
         </button>
       </div>
     </div>
+
   `,
   styles: [
     `
@@ -121,6 +126,7 @@ export class DependientesComponent implements OnInit {
 
   displayedColumns: string[] = ['select', 'nombre', 'idEmpleado', 'equipo'];
   dataSource = new MatTableDataSource<{
+    selected: boolean;
     nombre: string;
     idEmpleado: number;
     equipo: string;
@@ -142,7 +148,8 @@ export class DependientesComponent implements OnInit {
       const mappedUsers = apiUsers.map((user: any) => ({
         nombre: `${user.firstname} ${user.lastname}`,
         idEmpleado: user.id,
-        equipo: 'Sin equipo', // Puedes cambiar esto si hay un campo de equipo
+        equipo: 'Sin equipo',
+        selected: false,
       }));
       this.dataSource = new MatTableDataSource(mappedUsers);
       console.log(mappedUsers, 'Usuarios mapeados para la tabla!');
@@ -161,8 +168,10 @@ export class DependientesComponent implements OnInit {
           description: 'Equipo creado desde modal',
         };
         this.dependienteService.createEquipo(request).subscribe({
-          next: () => {
+          next: (response:TeamCreateRequest) => {
+            if(!response.id) return;
             this.loadEquipos();
+            this.guardarFormulario(response.id)
           },
           error: (err) => {
             console.error('[ERROR] Error al crear equipo:', err);
@@ -171,6 +180,7 @@ export class DependientesComponent implements OnInit {
       }
     });
   }
+
 
   loadEquipos() {
     console.log('[INFO] Cargando equipos desde API...');
@@ -186,13 +196,24 @@ export class DependientesComponent implements OnInit {
     });
   }
 
-  guardarFormulario() {
+  getSeleccionados(): number[] {
+    return this.dataSource.data
+      .filter((user) => user.selected)
+      .map((user) => user.idEmpleado);
+  }
+
+  onSeleccionar() {
+    const seleccionados = this.getSeleccionados();
+    console.log('IDs seleccionados:', seleccionados);
+  }
+
+
+  guardarFormulario(teamId: number) {
     this.dependienteService
-      .asignarUsuariosATeam(1, '1', [2, 3])
+      .asignarUsuariosATeam(1, '1', this.getSeleccionados())
       .subscribe({
         next: (res) => console.log('Usuarios asignados correctamente', res),
         error: (err) => console.error('Error al asignar usuarios', err),
       });
-    console.log('Formulario guardado:', this.equipoForm.value);
-  }
+    console.log('Formulario guardado:', this.equipoForm.value);  }
 }

@@ -21,7 +21,7 @@ export interface ScheduleHourCreate {
   providedIn: 'root',
 })
 export class ScheduleHourService {
-  private apiUrl = 'http://localhost:5000/api/schedulehours';
+  private apiUrl = 'http://localhost:3000/api/schedulehours';
 
   constructor(private http: HttpClient) {}
 
@@ -32,7 +32,6 @@ export class ScheduleHourService {
 
     return this.http.get<ScheduleHour[]>(this.apiUrl, { headers });
   }
-
 
   createSheduleHour(id: ScheduleHourCreate): Observable<any> {
     return this.http.post<ScheduleHourCreate>(this.apiUrl, id);
