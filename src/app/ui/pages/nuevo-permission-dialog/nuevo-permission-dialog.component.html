@@ -1,0 +1,29 @@
+<mat-dialog-content class="container">
+  <h2><mat-icon>add</mat-icon> Crear Permiso</h2>
+
+  <form [formGroup]="permissionForm">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre del Permiso *</mat-label>
+      <input matInput formControlName="name">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="description"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="status">
+        <mat-option value=1>Activo</mat-option>
+        <mat-option value=0>Inactivo</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cerrarDialog()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardarPermiso()">Crear</button>
+</mat-dialog-actions>

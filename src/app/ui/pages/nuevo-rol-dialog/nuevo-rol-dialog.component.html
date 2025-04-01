@@ -16,36 +16,11 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-
-    <!-- Botones -->
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="cerrarDialog()">Cancelar</button>
-      <button mat-raised-button color="primary" type="submit" (click)="guardarRol()">Crear</button>
-    </mat-dialog-actions>
   </form>
 
-  <!-- Permisos (Usando `mat-select` en lugar de `mat-chip-list`) -->
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Permisos</mat-label>
-    <mat-select formControlName="permisos" multiple>
-      <mat-option *ngFor="let permiso of permisosDisponibles" [value]="permiso">
-        {{ permiso }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-
   <!-- Dependiente -->
-  <h3>10 Usuarios asignados</h3>
   <div class="dependiente-container">
-    <mat-form-field appearance="outline">
-      <mat-label>Dependiente</mat-label>
-      <mat-select formControlName="dependiente">
-        <mat-option value="Pedro Perez">Pedro Perez</mat-option>
-        <mat-option value="Juan Perez">Juan Perez</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <button mat-raised-button color="primary">+ Añadir</button>
+    <button mat-raised-button color="primary" (click)="openCreatePermissionDialog()">+ Añadir</button>
   </div>
 
   <!-- Lista de Usuarios Asignados -->
@@ -57,10 +32,10 @@
       <td mat-cell *matCellDef="let user"> <mat-checkbox></mat-checkbox> </td>
     </ng-container>
 
-    <!-- Nombre -->
-    <ng-container matColumnDef="nombre">
+    <!-- Firstname -->
+    <ng-container matColumnDef="firstname">
       <th mat-header-cell *matHeaderCellDef> Nombre </th>
-      <td mat-cell *matCellDef="let user"> {{ user.nombre }} </td>
+      <td mat-cell *matCellDef="let user"> {{ user.firstname }} </td>
     </ng-container>
 
     <!-- ID Empleado -->
@@ -70,9 +45,9 @@
     </ng-container>
 
     <!-- Tipo de Empleado -->
-    <ng-container matColumnDef="tipo">
+    <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef> Tipo de Empleado </th>
-      <td mat-cell *matCellDef="let user"> {{ user.tipo }} </td>
+      <td mat-cell *matCellDef="let user"> {{ user.type }} </td>
     </ng-container>
 
     <!-- Acciones -->
