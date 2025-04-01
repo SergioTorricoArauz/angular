@@ -7,29 +7,31 @@
       <mat-label>Nombre del Rol *</mat-label>
       <input matInput formControlName="nombreRol">
     </mat-form-field>
+  </form>
 
+  <!-- Permisos Disponibles (Select) -->
+  <div class="permisos-container">
+    <h3>Permisos Disponibles</h3>
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Permisos</mat-label>
-      <mat-select formControlName="permisos" multiple>
-        <mat-option *ngFor="let permiso of permisosDisponibles" [value]="permiso">
-          {{ permiso }}
+      <mat-select formControlName="permisos" multiple (selectionChange)="onPermissionsChange($event)">
+        <mat-option *ngFor="let permiso of permisosDisponibles" [value]="permiso.id">
+          {{ permiso.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>
-  </form>
-
-  <!-- Dependiente -->
-  <div class="dependiente-container">
-    <button mat-raised-button color="primary" (click)="openCreatePermissionDialog()">+ Añadir</button>
+    <button mat-stroked-button color="primary" (click)="openCreatePermissionDialog()">+ Añadir permiso</button>
   </div>
 
   <!-- Lista de Usuarios Asignados -->
+  <h3>Usuarios Asignados</h3>
   <table mat-table [dataSource]="usuariosAsignados" class="mat-elevation-z8">
-
     <!-- Checkbox -->
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef> <mat-checkbox></mat-checkbox> </th>
-      <td mat-cell *matCellDef="let user"> <mat-checkbox></mat-checkbox> </td>
+      <td mat-cell *matCellDef="let user">
+        <mat-checkbox [(ngModel)]="user.selected"></mat-checkbox>
+      </td>
     </ng-container>
 
     <!-- Firstname -->
@@ -60,13 +62,11 @@
       </td>
     </ng-container>
 
-    <!-- Header y filas -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 </mat-dialog-content>
 
-<!-- Botones -->
 <mat-dialog-actions align="end">
   <button mat-button (click)="cerrarDialog()">Cancelar</button>
   <button mat-raised-button color="primary" (click)="guardarRol()">Crear</button>
