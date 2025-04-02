@@ -26,4 +26,8 @@ export class RoleService {
   deleteRole(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  createRolePermission(roleId: number, permissionIds: number[]): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${roleId}/permissions`, permissionIds);
+  }
 }
