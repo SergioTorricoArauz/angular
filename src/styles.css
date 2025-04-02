@@ -5,9 +5,8 @@
 }
 
 html, body {
-  height: 100%; /* Asegura que ocupen toda la pantalla */
+  height: 100%;
   width: 100%;
-  overflow: hidden;
 }
 
 html, body { height: 100%; }

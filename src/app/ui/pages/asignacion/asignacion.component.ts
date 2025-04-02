@@ -1,8 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { addDays, format, isWeekend } from 'date-fns';
-import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
-import { FormsModule } from '@angular/forms';
+import {Component, Input, OnInit} from '@angular/core';
+import {addDays, format, isWeekend} from 'date-fns';
+import {CommonModule} from '@angular/common';
+import {MatTableModule} from '@angular/material/table';
+import {FormsModule} from '@angular/forms';
+import {ScheduleHourService} from '../../../infrastructure/api/schedulehour.service';
+import {ScheduleService} from '../../../infrastructure/api/schedule.service';
+import {getTreeNoValidDataSourceError} from '@angular/cdk/tree';
 
 @Component({
   selector: 'app-asignacion',
@@ -13,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class AsignacionComponent implements OnInit {
   @Input() usuarios: any[] = [];
+  @Input() scheduleId: number = 0;
 
   fechaInicio = new Date('2024-12-01');
   fechaFin = new Date('2024-12-20');
@@ -21,54 +25,181 @@ export class AsignacionComponent implements OnInit {
 
   diasLaborales: { dia: string; fecha: string; id: string }[] = [];
 
-  ngOnInit() {
-    this.diasLaborales = this.generarDiasLaborales();
-
-    // Si los usuarios llegan vacíos o sin turnos inicializados
-    for (let user of this.usuarios) {
-      if (!user.turnos) {
-        user.turnos = this.inicializarTurnos();
-      }
-    }
+  constructor(private scheduleServiceHour: ScheduleHourService,
+              private scheduleService: ScheduleService
+  ) {
   }
+
+  ngOnInit() {
+    this.scheduleServiceHour.getSheduleHourBySheduleUser(3).subscribe(response => {
+      console.log(response, "USUARIO POR SERVICIO");
+    })
+    this.diasLaborales = this.generarDiasLaborales();
+    console.log("DÍAS LABORALES:", this.diasLaborales.map(d => d.dia));
+
+    this.scheduleService.getSchedulesById(this.scheduleId).subscribe((data) => {
+      this.fechaInicio = data.startAt;
+      this.fechaFin = data.endsAt;
+
+      this.scheduleServiceHour.getSheduleHourByShedule(this.scheduleId).subscribe((dataHour) => {
+        this.turnos = [];
+        console.log("DATAHOUR:", dataHour);
+
+        const agrupadosPorDia: { [key: string]: any[] } = {};
+
+        dataHour.forEach((item: any) => {
+          const dias = item.daysOfWeek
+            ?.split(',')
+            .map((d: string) => d.trim().toLowerCase());
+
+          const horas = item.hours;
+
+          if (!dias || !Array.isArray(dias)) {
+            console.warn('Item sin días válidos:', item);
+            return;
+          }
+
+          dias.forEach((dia: string) => {
+            if (!agrupadosPorDia[dia]) {
+              agrupadosPorDia[dia] = [];
+            }
+
+            horas.forEach((hora: any, index: number) => {
+              const entradaCode = `E${index + 1}`;
+              const salidaCode = `S${index + 1}`;
+
+              agrupadosPorDia[dia].push({
+                code: entradaCode,
+                horaDesde: hora.startsTimeAt,
+                HoraFin: hora.endsTimeAt
+              });
+
+              agrupadosPorDia[dia].push({
+                code: salidaCode,
+                horaDesde: hora.startsTimeAt,
+                HoraFin: hora.endsTimeAt
+              });
+            });
+          });
+        });
+
+// Convertimos a array final
+        this.turnos = Object.keys(agrupadosPorDia).map(dia => ({
+          dia,
+          turnos: agrupadosPorDia[dia]
+        }));
+
+        console.log("TURNOS AGRUPADOS:", this.turnos);
+
+        console.log('TURNOS CON DÍAS:', this.turnos);
+
+        // ✅ Inicializa turnos después de cargar correctamente `this.turnos`
+        for (let user of this.usuarios) {
+          if (!user.turnos) {
+            user.turnos = this.inicializarTurnos();
+          }
+        }
+
+        console.log("Turnos por día:", this.usuarios.map(u => u.turnos));
+      });
+    });
+
+    // ❌ Eliminado el segundo bloque innecesario que causaba que turnos se vacíen antes de tiempo
+  }
+
+
+
 
   getPlaceholder(turno: any): string {
-    console.log(turno);
-    if (turno.code === 'E1') return turno.horaDesde;
-    if (turno.code === 'S1') return turno.HoraFin;
-    return '--:--';
+    return turno.horaDesde || '--:--';
   }
 
+  turnosPorDia(diaNombre: string): any[] {
+    return this.turnos.filter(t =>
+      t.diasPermitidos?.includes(diaNombre.toLowerCase())
+    );
+  }
+  diasMapReverso: any = {
+    monday: 'lunes',
+    tuesday: 'martes',
+    wednesday: 'miercoles',
+    thursday: 'jueves',
+    friday: 'viernes'
+  };
+  getTurnosDelDia(nombreDia: string) {
+    const diaObj = this.turnos.find(t => t.dia === nombreDia.toLowerCase());
+    return diaObj?.turnos || null;
+  }
   generarDiasLaborales() {
-    const dias: { dia: string; fecha: string; id: string }[] = [];
-    let actual = new Date(this.fechaInicio);
+    const diasSemana = [
+      { dia: 'lunes', fecha: '01/01' },
+      { dia: 'martes', fecha: '02/01' },
+      { dia: 'miercoles', fecha: '03/01' },
+      { dia: 'jueves', fecha: '04/01' },
+      { dia: 'viernes', fecha: '05/01' },
+      { dia: 'sabado', fecha: '06/01' },
+      { dia: 'domingo', fecha: '07/01' }
+    ];
 
-    while (actual <= this.fechaFin) {
-      const diaSemana = actual.getDay();
-      if (diaSemana !== 0 && diaSemana !== 6) {
-        const id = format(actual, 'yyyy-MM-dd');
-        dias.push({
-          dia: format(actual, 'EEEE'),
-          fecha: format(actual, 'dd/MM'),
-          id: id,
-        });
-      }
-      actual = addDays(actual, 1);
-    }
-
-    return dias;
+    return diasSemana.map((d, i) => ({
+      dia: d.dia,
+      fecha: d.fecha,
+      id: `2024-01-0${i + 1}` // formato de ID único para ngModel
+    }));
   }
 
   inicializarTurnos() {
     const turnosPorDia: any = {};
+
     for (let dia of this.diasLaborales) {
-      turnosPorDia[dia.id] = {
-        E1: '',
-        S1: '',
-        E2: '',
-        S2: ''
-      };
+      const turnoDia: any = {};
+
+      // Solo agrega los turnos permitidos explícitamente para ese día
+      for (let turno of this.turnos) {
+        const permitidos = turno.diasPermitidos?.map((d: string) => d.toLowerCase());
+        if (permitidos?.includes(dia.dia.toLowerCase())) {
+          turnoDia[turno.code] = '';
+        }
+      }
+
+      turnosPorDia[dia.id] = turnoDia;
     }
+    console.log(turnosPorDia, "turnos por dia");
     return turnosPorDia;
   }
+
+  get turnosAgrupadosPorDia() {
+    const diasUnicos = [...new Set(this.turnos.flatMap(t => t.diasPermitidos))];
+    return diasUnicos.map(dia => ({
+      dia,
+      turnos: this.turnos.filter(t => t.diasPermitidos.includes(dia))
+    }));
+  }
+
+  getDiaId(diaNombre: string): string {
+    const encontrado = this.diasLaborales.find(d => d.dia === diaNombre);
+    return encontrado?.id ?? '';
+  }
+
+  getFechaPorNombre(diaNombre: string): string {
+    const encontrado = this.diasLaborales.find(d => d.dia === diaNombre);
+    return encontrado?.fecha ?? '';
+  }
+
+
+
+  getColspan(dia: string): number {
+    return this.turnos.filter(t => Array.isArray(t?.diasPermitidos) && t.diasPermitidos.includes(dia.toLowerCase())).length;
+  }
+
+  getTurnosVisiblesPorDia(dia: string): any[] {
+    return this.turnosPorDia(dia); // ya está filtrado por día, así que no necesitas volver a filtrar
+  }
+
+  getTurnosPorDiaFiltrados(dia: string): any[] {
+    return this.turnos.filter(turno =>
+      turno.diasPermitidos?.some((d: string) => d.toLowerCase() === dia.toLowerCase())
+    );
+  }
+
 }

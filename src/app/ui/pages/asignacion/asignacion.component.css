@@ -1,16 +1,26 @@
 .tabla-scroll {
+  max-height: 80vh;
   overflow-x: auto;
-  width: 100%;
-  background-color: #f5f5f5;
-  padding: 1rem;
+  overflow-y: auto;
+  display: block;
 }
+
+
 
 .tabla-wrapper {
-  min-width: 1400px; /* 👈 Fuerza el scroll si hay muchas columnas */
+  min-width: 1500px;         /* Asegura que se desborde horizontalmente */
 }
 
+/* También aplica a la tabla si prefieres */
+table {
+  min-width: 2000px; /* o más, según los días que tengas */
+  width: max-content; /* importante para que crezca según contenido */
+  border-collapse: collapse;
+}
+
+
 .full-width {
-  width: 100%;
+  width: max-content; /* <- hace que crezca según el contenido */
   border-collapse: collapse;
   background-color: white;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
@@ -54,4 +64,13 @@ input.hora-input {
 }
 .tabla-scroll::-webkit-scrollbar-track {
   background: transparent;
+}
+
+.cuadro-vacio {
+  width: 60px;
+  height: 32px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: auto;
+  background-color: #f5f5f5;
 }

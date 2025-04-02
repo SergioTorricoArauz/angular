@@ -7,7 +7,7 @@ import {Permission} from '../../domain/entities/permission';
   providedIn: 'root'
 })
 export class PermissionService {
-  private readonly apyUrl: string = 'http://localhost:3000/api/Permission';
+  private readonly apyUrl: string = 'http://localhost:5000/api/Permission';
 
   constructor(private http: HttpClient) {}
 

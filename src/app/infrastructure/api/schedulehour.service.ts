@@ -11,8 +11,42 @@ export interface ScheduleHour {
   endsTimeAt: string;
 }
 export interface ScheduleHourCreate {
-  scheduleId: number;
+  scheduleId?: number;
   daysOfWeek: string;
+  hours: HourRange[];
+}
+
+export interface User {
+  id: number;
+  type: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  status: number;
+  gender: string;
+  bornAt: string; // o Date si lo vas a parsear
+  country: string;
+  phone: string;
+  address: string;
+  collaboratorId: number;
+  serviceAssociated: number;
+  coordinatorId: number;
+  supervisorId: number;
+  systemId: number;
+  modeWork: number;
+  winUsernameConecta: string;
+  winUsernameClient: string;
+  eh: string;
+  avayaId: number;
+  orionUsername: string;
+  rrssUsername: string;
+  serialComputer: string;
+  serialMonitor: string;
+  createdAt: string; // o Date
+  updatedAt: string; // o Date
+}
+
+export interface HourRange {
   startsTimeAt: string;
   endsTimeAt: string;
 }
@@ -21,7 +55,10 @@ export interface ScheduleHourCreate {
   providedIn: 'root',
 })
 export class ScheduleHourService {
-  private apiUrl = 'http://localhost:3000/api/schedulehours';
+  private apiUrl = 'http://localhost:5000/api/schedulehours';
+  private apiUrlBatch = 'http://localhost:5000/api/schedulehours/batch';
+  private apiUrlBatchBy = 'http://localhost:5000/api/schedulehours/bySchedule';
+  private apiUrlBatchByUser = 'http://localhost:5000/api/Users/by-service';
 
   constructor(private http: HttpClient) {}
 
@@ -33,7 +70,14 @@ export class ScheduleHourService {
     return this.http.get<ScheduleHour[]>(this.apiUrl, { headers });
   }
 
-  createSheduleHour(id: ScheduleHourCreate): Observable<any> {
-    return this.http.post<ScheduleHourCreate>(this.apiUrl, id);
+  createSheduleHour(id: any[]): Observable<any> {
+    return this.http.post<ScheduleHourCreate>(this.apiUrlBatch, id);
+  }
+
+  getSheduleHourByShedule(id: number): Observable<any> {
+    return this.http.get<ScheduleHourCreate[]>(`${this.apiUrlBatchBy}/${id}`);
+  }
+  getSheduleHourBySheduleUser(id: number): Observable<any> {
+    return this.http.get<User[]>(`${this.apiUrlBatchByUser}/${id}`);
   }
 }

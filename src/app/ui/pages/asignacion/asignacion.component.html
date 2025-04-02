@@ -9,14 +9,23 @@
         <th rowspan="2">Desde</th>
         <th rowspan="2">Hasta</th>
         <ng-container *ngFor="let dia of diasLaborales">
-          <th [attr.colspan]="turnos.length" class="grupo-dia">
+          <th
+            [attr.colspan]="getTurnosDelDia(dia.dia)?.length || 1"
+            class="grupo-dia">
             {{ dia.dia }}<br />{{ dia.fecha }}
           </th>
         </ng-container>
       </tr>
       <tr>
         <ng-container *ngFor="let dia of diasLaborales">
-          <th *ngFor="let turno of turnos">{{ turno.code }}</th>
+          <ng-container *ngIf="getTurnosDelDia(dia.dia); else celdaVacia">
+            <ng-container *ngFor="let turno of getTurnosDelDia(dia.dia)">
+              <th>{{ turno.code }}</th>
+            </ng-container>
+          </ng-container>
+          <ng-template #celdaVacia>
+            <th></th>
+          </ng-template>
         </ng-container>
       </tr>
       </thead>
@@ -30,15 +39,21 @@
         <td>{{ user.hasta }}</td>
 
         <ng-container *ngFor="let dia of diasLaborales">
-          <ng-container *ngFor="let turno of turnos">
-            <td>
-              <input
-                [(ngModel)]="user.turnos[dia.id][turno.code]"
-                [ngModelOptions]="{ standalone: true }"
-                [placeholder]="getPlaceholder(turno)"
-                class="hora-input" />
-            </td>
+          <ng-container *ngIf="getTurnosDelDia(dia.dia); else celdasVacias">
+            <ng-container *ngFor="let turno of getTurnosDelDia(dia.dia)">
+              <td>
+                <input
+                  [(ngModel)]="user.turnos[dia.id][turno.code]"
+                  [ngModelOptions]="{ standalone: true }"
+                  [placeholder]="getPlaceholder(turno)"
+                  class="hora-input"
+                />
+              </td>
+            </ng-container>
           </ng-container>
+          <ng-template #celdasVacias>
+            <td></td>
+          </ng-template>
         </ng-container>
       </tr>
       </tbody>

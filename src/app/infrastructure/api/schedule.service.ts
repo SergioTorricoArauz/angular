@@ -15,8 +15,8 @@ export interface Schedule {
   operatorsCountMale: number;
   operatorsCountFemale: number;
   serviceTypeId: number;
-  startAt: string;
-  endsAt: string;
+  startAt: Date;
+  endsAt: Date;
 }
 
 
@@ -24,13 +24,17 @@ export interface Schedule {
   providedIn: 'root',
 })
 export class ScheduleService {
-  private apiUrl = 'http://localhost:3000/api/Schedule'; // URL de la API
+  private apiUrl = 'http://localhost:5000/api/Schedule'; // URL de la API
 
   constructor(private http: HttpClient) {}
 
   // Método para obtener la lista de las programaciones (schedules)
   getSchedules(): Observable<Schedule[]> {
     return this.http.get<Schedule[]>(this.apiUrl);
+  }
+
+  getSchedulesById(id:number): Observable<Schedule> {
+    return this.http.get<Schedule>(`${this.apiUrl}/${id}`);
   }
 
   createSchedule(schedule: Schedule): Observable<Schedule> {
