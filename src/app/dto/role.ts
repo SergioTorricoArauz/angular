@@ -22,9 +22,12 @@ export interface RoleResponse {
   users: User[];
 }
 
-export interface RoleCreate{
+export interface RoleCreate {
   id?: number;
   name: string;
   description?: string;
   status: number;
+  createdAt?: string;
+  rolePermissions?: { permission: { name: string } }[];
+  userRoles?: { user: { fullname: string } }[];
 }

@@ -21,6 +21,8 @@ import {
   UserService,
   UserCreateRequest,
 } from '../../../infrastructure/api/usuario.service';
+import {ServicioTableItem} from '../../../domain/entities/serviciotableitem';
+import {ServicioService} from '../../../infrastructure/api/servicio.service';
 
 @Component({
   selector: 'app-crear-usuario',
@@ -43,13 +45,23 @@ export class AppCrearUsuarioComponent {
   constructor(
     private dialog: MatDialog,
     private userService: UserService,
+    private servicioService: ServicioService,
     private router: Router
   ) {}
+
+  ngOnInit(): void {
+    this.servicioService.getServices().subscribe((data: ServicioTableItem[]) => {
+      this.servicios = data;
+    });
+  }
 
   tiposUsuario = ['Operador', 'Coordinador', 'Workforce', 'Supervisor'];
   esOperador = false;
   esCoordinador = false;
   esSupervisor = false;
+  imagenPreview: string | null = null;
+  imagenSeleccionada: File | null = null;
+  servicios: ServicioTableItem[] = [];
 
   usuarioForm = new FormGroup({
     tipoUsuario: new FormControl<string>('', {
@@ -108,37 +120,28 @@ export class AppCrearUsuarioComponent {
     this.esSupervisor = tipo === 'Supervisor';
   }
 
-  // ✅ Nuevo método que envía los datos al servicio
+
   guardarUsuario() {
     if (this.usuarioForm.valid) {
       const nuevoUsuario: UserCreateRequest = {
-        type: this.getUserType(
-          this.usuarioForm.get('tipoUsuario')?.value || ''
-        ),
+        type: this.getUserType(this.usuarioForm.get('tipoUsuario')?.value || ''),
         firstname: this.usuarioForm.get('nombre')?.value || '',
         lastname: this.usuarioForm.get('apellidos')?.value || '',
         email: this.usuarioForm.get('correo')?.value || '',
-        status: 1, // Activo por defecto
+        status: 1,
         gender: this.usuarioForm.get('sexo')?.value || '',
-        bornAt:
-          this.usuarioForm
-            .get('fechaNacimiento')
-            ?.value?.toISOString()
-            .split('T')[0] || '',
-        country: 'España', // Asumimos por defecto
+        bornAt: this.usuarioForm.get('fechaNacimiento')?.value?.toISOString().split('T')[0] || '',
+        country: 'España',
         phone: this.usuarioForm.get('telefono')?.value || '',
         address: this.usuarioForm.get('direccion')?.value || '',
         collaboratorId: 0,
-        serviceAssociated:
-          Number(this.usuarioForm.get('servicioAsociado')?.value) || 0,
+        serviceAssociated: Number(this.usuarioForm.get('servicioAsociado')?.value) || 0,
         coordinatorId: Number(this.usuarioForm.get('coordinador')?.value) || 0,
         supervisorId: Number(this.usuarioForm.get('supervisor')?.value) || 0,
         systemId: 0,
         modeWork: 0,
-        winUsernameConecta:
-          this.usuarioForm.get('usuarioWinConecta')?.value || '',
-        winUsernameClient:
-          this.usuarioForm.get('usuarioWinCliente')?.value || '',
+        winUsernameConecta: this.usuarioForm.get('usuarioWinConecta')?.value || '',
+        winUsernameClient: this.usuarioForm.get('usuarioWinCliente')?.value || '',
         eh: this.usuarioForm.get('eh')?.value || '',
         avayaId: Number(this.usuarioForm.get('idAvaya')?.value) || 0,
         orionUsername: this.usuarioForm.get('usuarioOrion')?.value || '',
@@ -151,7 +154,6 @@ export class AppCrearUsuarioComponent {
         next: (response) => {
           console.log('✅ Usuario creado correctamente:', response);
           alert('Usuario creado exitosamente');
-
           this.usuarioForm.reset();
         },
         error: (error) => {
@@ -160,14 +162,10 @@ export class AppCrearUsuarioComponent {
         },
       });
     } else {
-      console.warn(
-        '⚠️ Formulario inválido. Por favor, completa los campos requeridos.'
-      );
+      console.warn('⚠️ Formulario inválido. Por favor, completa los campos requeridos.');
     }
   }
 
-  // ✅ Método auxiliar para convertir tipos de usuario a números
-  // ✅ Método auxiliar para convertir tipos de usuario a números
   getUserType(tipo: string): number {
     const tipos = {
       Operador: 1,
@@ -175,7 +173,6 @@ export class AppCrearUsuarioComponent {
       Workforce: 3,
       Supervisor: 4,
     } as const;
-
     return tipos[tipo as keyof typeof tipos] || 0;
   }
 
@@ -187,5 +184,17 @@ export class AppCrearUsuarioComponent {
     dialogRef.afterClosed().subscribe((result) => {
       console.log('El modal se cerró con datos:', result);
     });
+  }
+
+  onImageSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      this.imagenSeleccionada = file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imagenPreview = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
   }
 }

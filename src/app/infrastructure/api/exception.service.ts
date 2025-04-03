@@ -15,7 +15,7 @@ export interface ExceptionReason {
   providedIn: 'root',
 })
 export class ExceptionService {
-  private apiUrl = 'http://localhost:5000/api/ExceptionReasons';
+  private apiUrl = 'http://localhost:3000/api/ExceptionReasons';
 
   constructor(private http: HttpClient) {}
 

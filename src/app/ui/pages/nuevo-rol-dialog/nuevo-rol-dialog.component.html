@@ -25,7 +25,7 @@
 
   <!-- Lista de Usuarios Asignados -->
   <h3>Usuarios Asignados</h3>
-  <table mat-table [dataSource]="usuariosAsignados" class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <!-- Checkbox -->
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef> <mat-checkbox></mat-checkbox> </th>
@@ -65,6 +65,8 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

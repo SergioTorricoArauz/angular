@@ -10,6 +10,9 @@ import { ExceptionService } from '../../../infrastructure/api/exception.service'
 import { MatMenuModule } from '@angular/material/menu';
 import { EditExceptionComponent } from '../edit-exception/edit-exception.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { ViewChild, AfterViewInit } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+
 
 interface ExceptionTableItem {
   id: number;
@@ -31,6 +34,7 @@ interface ExceptionTableItem {
     NgClass,
     NgFor,
     NgIf,
+    MatPaginator,
   ],
   templateUrl: './exception-list.component.html',
   styleUrls: ['./exception-list.component.css'],
@@ -38,6 +42,12 @@ interface ExceptionTableItem {
 export class ExceptionListComponent implements OnInit {
   displayedColumns: string[] = ['select', 'date', 'type', 'status', 'actions'];
   dataSource = new MatTableDataSource<ExceptionTableItem>([]);
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+  }
 
   constructor(
     private dialog: MatDialog,

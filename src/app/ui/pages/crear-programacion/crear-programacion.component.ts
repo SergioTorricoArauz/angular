@@ -16,6 +16,9 @@ import {Schedule, ScheduleService} from '../../../infrastructure/api/schedule.se
 import {ScheduleHourCreate, ScheduleHourService} from '../../../infrastructure/api/schedulehour.service';
 import {Route, Router} from '@angular/router';
 import {AsignacionComponent} from '../asignacion/asignacion.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+
 
 @Component({
   selector: 'app-crear-programacion',
@@ -136,7 +139,7 @@ import {AsignacionComponent} from '../asignacion/asignacion.component';
       <div class="acciones">
         <button mat-stroked-button color="warn">Cerrar</button>
         <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
-        <button mat-raised-button color="accent" (click)="crearProgramacion()">
+        <button mat-raised-button color="accent" (click)="crearProgramacion()" *ngIf="isProgramacionGuardada">
           Crear Programación
         </button>
       </div>
@@ -245,6 +248,7 @@ export class CrearProgramacionComponent implements OnInit {
   sheduleId: number = 0;
   showAsignacion: boolean = false;
   dias = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
+  isProgramacionGuardada: boolean = false;
 
   form: any = {
     clienteId: null,
@@ -268,7 +272,8 @@ export class CrearProgramacionComponent implements OnInit {
     private campaniaService: CampaignService,
     private scheduleService: ScheduleService,
     private scheduleServiceHour: ScheduleHourService,
-    private route: Router
+    private route: Router,
+    private dialog: MatDialog
   ) {
   }
 
@@ -388,7 +393,7 @@ export class CrearProgramacionComponent implements OnInit {
         this.camposDisponibilidad.forEach(campo => {
           const diasSeleccionados = Object.keys(campo.dias)
             .filter(dia => campo.dias[dia])
-            .map(dia => diasMap[dia]); // ['Lunes', 'Martes']
+            .map(dia => diasMap[dia]);
 
           const hours = campo.horarios.map((h: { horarioDesde: string; horarioHasta: string }) => ({
             startsTimeAt: h.horarioDesde,
@@ -398,17 +403,26 @@ export class CrearProgramacionComponent implements OnInit {
           diasSeleccionados.forEach(dia => {
             scheduleCreateHours.push({
               scheduleId: response.id,
-              daysOfWeek: dia, // Un día por objeto
+              daysOfWeek: dia,
               hours: hours
             });
           });
         });
-        console.log(scheduleCreateHours, "SCHEDULELLCREATEHOURS");
 
-// Enviar el array completo (un objeto por día)
         this.scheduleServiceHour.createSheduleHour(scheduleCreateHours).subscribe((res: any) => {
           console.log('Horario creado', res);
         });
+
+        // Abre el diálogo de confirmación
+        this.dialog.open(ConfirmDialogComponent, {
+          data: {
+            title: 'Éxito',
+            message: 'La programación se ha guardado correctamente.'
+          }
+        });
+
+        // Cambia la visibilidad del botón
+        this.isProgramacionGuardada = true;
 
       },
       error: (err) => console.error('Error al crear la programación', err),

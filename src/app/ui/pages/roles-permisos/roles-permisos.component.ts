@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -37,9 +37,11 @@ import { EditRoleComponent } from '../edit-role/edit-role.component';
   templateUrl: './roles-permisos.component.html',
   styleUrls: ['./roles-permisos.component.css']
 })
-export class RolesPermisosComponent implements OnInit {
+export class RolesPermisosComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['select', 'fechaCreacion', 'nombreRol', 'permisos', 'usuarios', 'estado', 'acciones'];
-  dataSource: any[] = [];
+  dataSource = new MatTableDataSource<any>([]);
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private dialog: MatDialog, private roleService: RoleService) {}
 
@@ -47,14 +49,19 @@ export class RolesPermisosComponent implements OnInit {
     this.loadRoles();
   }
 
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+  }
+
   loadRoles() {
     this.roleService.getRoles().subscribe({
-      next: (roles) => {
-        this.dataSource = roles.map(role => ({
-          fecha: new Date().toLocaleDateString(), // O usar role.createdAt si existe
+      next: (roles: RoleCreate[]) => {
+        this.dataSource.data = roles.map(role => ({
+          id: role.id,
+          fecha: new Date(role.createdAt || new Date()).toLocaleDateString(),
           nombre: role.name,
-          permisos: ['N/A'], // Ajustar si tienes permisos disponibles
-          usuarios: [],       // Rellenar si tienes usuarios asignados
+          permisos: role.rolePermissions?.map((p: any) => p.permission.name) || ['N/A'],
+          usuarios: role.userRoles?.map((u: any) => u.user?.fullname) || [],
           estado: role.status === 1 ? 'Active' : 'Inactive'
         }));
       },
@@ -65,8 +72,8 @@ export class RolesPermisosComponent implements OnInit {
   }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    console.log('Filtro aplicado:', filterValue);
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
   }
 
   abrirModal() {
@@ -77,7 +84,7 @@ export class RolesPermisosComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('El modal se cerró con datos:', result);
-      if (result) this.loadRoles(); // Recargar roles si se creó uno nuevo
+      if (result) this.loadRoles();
     });
   }
 
@@ -89,7 +96,7 @@ export class RolesPermisosComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('El modal se cerró con datos:', result);
-      if (result) this.loadRoles(); // Refrescar tabla si se editó un rol
+      if (result) this.loadRoles();
     });
   }
 
@@ -98,7 +105,7 @@ export class RolesPermisosComponent implements OnInit {
       this.roleService.deleteRole(id).subscribe({
         next: () => {
           console.log('Rol eliminado');
-          this.loadRoles(); // Recargar roles después de eliminar
+          this.loadRoles();
         },
         error: (err) => {
           console.error('[ERROR] No se pudo eliminar el rol:', err);

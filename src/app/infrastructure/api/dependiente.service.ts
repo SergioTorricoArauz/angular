@@ -30,7 +30,7 @@ export interface TeamCreateRequest {
   providedIn: 'root',
 })
 export class DependienteService {
-  private readonly apiUrl = 'http://localhost:5000/api/Team';
+  private readonly apiUrl = 'http://localhost:3000/api/Team';
 
   constructor(private http: HttpClient) {}
 

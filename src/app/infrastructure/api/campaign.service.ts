@@ -13,7 +13,7 @@ export interface Campaign {
   providedIn: 'root',
 })
 export class CampaignService {
-  private apiUrl = 'http://localhost:5000/api/Campaign'; // URL de la API
+  private apiUrl = 'http://localhost:3000/api/Campaign'; // URL de la API
 
   constructor(private http: HttpClient) {}
 

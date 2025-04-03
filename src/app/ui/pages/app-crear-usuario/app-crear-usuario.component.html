@@ -3,6 +3,15 @@
 
   <div class="form-grid">
     <div class="column">
+      <div class="form-field full-width">
+        <label>Imagen</label>
+        <div class="image-upload-wrapper">
+          <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Preview" width="120" height="120" />
+          <label for="imagen" class="image-upload-button">Insertar</label>
+        </div>
+        <input id="imagen" type="file" accept="image/*" (change)="onImageSelected($event)" />
+      </div>
+
       <mat-form-field appearance="outline">
         <mat-label>Tipo de Usuario *</mat-label>
         <mat-select formControlName="tipoUsuario" (selectionChange)="onTipoUsuarioChange()">
@@ -75,7 +84,9 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Servicio Asociado *</mat-label>
-        <input matInput formControlName="servicioAsociado">
+        <mat-select formControlName="servicioAsociado">
+          <mat-option *ngFor="let servicio of servicios" [value]="servicio.id">{{ servicio.name }}</mat-option>
+        </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline" *ngIf="esOperador || esCoordinador">
