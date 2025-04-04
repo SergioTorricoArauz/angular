@@ -16,6 +16,7 @@ import {
   Schedule,
 } from '../../../infrastructure/api/schedule.service';
 
+
 @Component({
   selector: 'app-programacion',
   standalone: true,
@@ -30,7 +31,7 @@ import {
     MatInputModule,
     MatFormFieldModule,
     MatPaginatorModule,
-    MatSortModule,
+    MatSortModule
   ],
   template: `
     <div class="contenedor">
@@ -81,7 +82,10 @@ import {
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="editarProgramacion(element.id)">Editar</button>
+              <button mat-menu-item (click)="redirectionEdit(element.id)">Editar</button>
+              <button mat-menu-item (click)="archivarProgramacion(element.id)">Ver</button>
+              <button mat-menu-item (click)="archivarProgramacion(element.id)">Asignar Operador</button>
+              <button mat-menu-item (click)="archivarProgramacion(element.id)">Duplicar</button>
               <button mat-menu-item (click)="archivarProgramacion(element.id)">Archivar</button>
             </mat-menu>
           </td>
@@ -152,9 +156,10 @@ export class ProgramacionComponent implements OnInit {
     this._router.navigate(['main-page/crear-programacion']);
   }
 
-  editarProgramacion(id: number) {
-    console.log('✏️ Editando programación:', id);
+  redirectionEdit(id: number) {
+    this._router.navigate(['main-page/edit-programacion/', id]);
   }
+
 
   archivarProgramacion(id: number) {
     console.log('🗃️ Archivando programación:', id);

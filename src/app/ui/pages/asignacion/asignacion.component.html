@@ -1,3 +1,12 @@
+<div class="agregar-usuario">
+  <label for="seleccionUsuario">Agregar Usuario:</label>
+  <select id="seleccionUsuario" (change)="agregarUsuarioDesdeSelect($event)">
+    <option value="">-- Seleccionar --</option>
+    <option *ngFor="let user of usuariosDisponibles" [value]="user.id">
+      {{ user.firstname }} {{ user.lastname }}
+    </option>
+  </select>
+</div>
 <div class="tabla-scroll">
   <div class="tabla-wrapper">
     <table class="mat-elevation-z8 full-width">
@@ -33,8 +42,27 @@
       <!-- FILAS DE USUARIOS -->
       <tbody>
       <tr *ngFor="let user of usuarios">
-        <td>{{ user.nombre }}</td>
-        <td>{{ user.sexo }}</td>
+        <td class="usuario-cell">
+          <ng-container *ngIf="!user.mostrandoSelect; else selectorUsuario">
+    <span
+      class="usuario-link"
+      *ngIf="user.nombre === 'Ingresar Usuario'"
+      (click)="user.mostrandoSelect = true">
+      Ingresar Usuario
+    </span>
+            <span *ngIf="user.nombre !== 'Ingresar Usuario'">{{ user.nombre }}</span>
+          </ng-container>
+
+          <ng-template #selectorUsuario>
+            <select class="usuario-select" #selectRef (change)="asignarUsuario(selectRef.value, user)">
+              <option value="">-- Seleccionar usuario --</option>
+              <option *ngFor="let u of usuariosDisponibles" [value]="u.id">
+                {{ u.firstname }} {{ u.lastname }}
+              </option>
+            </select>
+          </ng-template>
+        </td>
+      <td>{{ user.sexo }}</td>
         <td>{{ user.desde }}</td>
         <td>{{ user.hasta }}</td>
 

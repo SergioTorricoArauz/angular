@@ -25,7 +25,7 @@ export interface ClientResponse {
   providedIn: 'root',
 })
 export class ClienteService {
-  private apiUrl = 'http://localhost:3000/api/Clients';
+  private apiUrl = 'http://localhost:5000/api/Clients';
 
   constructor(private http: HttpClient) {}
 

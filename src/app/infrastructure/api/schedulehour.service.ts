@@ -55,10 +55,10 @@ export interface HourRange {
   providedIn: 'root',
 })
 export class ScheduleHourService {
-  private apiUrl = 'http://localhost:3000/api/schedulehours';
-  private apiUrlBatch = 'http://localhost:3000/api/schedulehours/batch';
-  private apiUrlBatchBy = 'http://localhost:3000/api/schedulehours/bySchedule';
-  private apiUrlBatchByUser = 'http://localhost:3000/api/Users/by-service';
+  private apiUrl = 'http://localhost:5000/api/schedulehours';
+  private apiUrlBatch = 'http://localhost:5000/api/schedulehours/batch';
+  private apiUrlBatchBy = 'http://localhost:5000/api/schedulehours/bySchedule';
+  private apiUrlBatchByUser = 'http://localhost:5000/api/Users/by-service';
 
   constructor(private http: HttpClient) {}
 

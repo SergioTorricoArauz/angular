@@ -12,7 +12,6 @@ import {RecuperarPasswordComponent} from './ui/pages/recuperar-password/recupera
 import {NewPasswordComponent} from './ui/pages/new-password/new-password.component';
 import {EditRoleComponent} from './ui/pages/edit-role/edit-role.component';
 import {EditMotiveComponent} from './ui/pages/edit-motive/edit-motive.component';
-import {ProgramacionComponent} from './ui/pages/programacion/programacion.component';
 import {CrearProgramacionComponent} from './ui/pages/crear-programacion/crear-programacion.component';
 import {ClientesComponent} from './ui/pages/clientes/clientes.component';
 import {ServiciosComponent} from './ui/pages/servicios/servicios.component';
@@ -21,6 +20,8 @@ import {UserStepperComponent} from './ui/pages/user-stepper/user-stepper.compone
 import { GestionHorarioComponent } from './ui/pages/gestion-horario/gestion-horario.component';
 import { MiHorarioComponent } from './ui/pages/mi-horario/mi-horario.component';
 import {AsignacionComponent} from './ui/pages/asignacion/asignacion.component';
+import {EditProgramacionComponent} from './ui/pages/edit-programacion/edit-programacion.component';
+import {ProgramacionComponent} from './ui/pages/programacion/programacion.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -48,6 +49,7 @@ export const routes: Routes = [
       { path: 'edit-motive/:id', component: EditMotiveComponent },
       { path: 'gestion-horario', component: GestionHorarioComponent },
       { path: 'mi-horario', component: MiHorarioComponent },
+      { path: 'edit-programacion/:id', component: EditProgramacionComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },

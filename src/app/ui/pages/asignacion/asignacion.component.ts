@@ -22,6 +22,7 @@ export class AsignacionComponent implements OnInit {
   fechaFin = new Date('2024-12-20');
 
   @Input() turnos: any[] = [];
+  usuariosDisponibles: any[] = [];
 
   diasLaborales: { dia: string; fecha: string; id: string }[] = [];
 
@@ -32,8 +33,8 @@ export class AsignacionComponent implements OnInit {
 
   ngOnInit() {
     this.scheduleServiceHour.getSheduleHourBySheduleUser(3).subscribe(response => {
-      console.log(response, "USUARIO POR SERVICIO");
-    })
+      this.usuariosDisponibles = response;
+    });
     this.diasLaborales = this.generarDiasLaborales();
     console.log("DÍAS LABORALES:", this.diasLaborales.map(d => d.dia));
 
@@ -109,6 +110,34 @@ export class AsignacionComponent implements OnInit {
 
 
 
+  agregarUsuario(usuario: any) {
+    const nuevoUsuario = {
+      ...usuario,
+      nombre: `${usuario.firstname} ${usuario.lastname}`,
+      sexo: usuario.gender,
+      desde: this.fechaInicio,
+      hasta: this.fechaFin,
+      turnos: this.inicializarTurnos()
+    };
+
+    this.usuarios.push(nuevoUsuario);
+  }
+  agregarUsuarioDesdeSelect(event: any) {
+    const userId = +event.target.value;
+    const usuario = this.usuariosDisponibles.find(u => u.id === userId);
+    if (usuario) {
+      this.agregarUsuario(usuario);
+    }
+  }
+
+  asignarUsuario(idSeleccionado: string, user: any) {
+    const usuario = this.usuariosDisponibles.find(u => u.id === Number(idSeleccionado));
+    if (usuario) {
+      user.nombre = `${usuario.firstname} ${usuario.lastname}`;
+      user.sexo = usuario.gender;
+      user.mostrandoSelect = false;
+    }
+  }
 
   getPlaceholder(turno: any): string {
     return turno.horaDesde || '--:--';
