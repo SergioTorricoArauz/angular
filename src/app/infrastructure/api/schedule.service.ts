@@ -24,7 +24,7 @@ export interface Schedule {
   providedIn: 'root',
 })
 export class ScheduleService {
-  private apiUrl = 'http://localhost:5000/api/Schedule'; // URL de la API
+  private apiUrl = 'http://localhost:3000/api/Schedule'; // URL de la API
 
   constructor(private http: HttpClient) {}
 
@@ -33,7 +33,7 @@ export class ScheduleService {
     return this.http.get<Schedule[]>(this.apiUrl);
   }
 
-  getSchedulesById(id:number): Observable<Schedule> {
+  getSchedulesById(id: number): Observable<Schedule> {
     return this.http.get<Schedule>(`${this.apiUrl}/${id}`);
   }
 

@@ -3,30 +3,26 @@
 
   <div class="form-grid">
     <div class="column">
-      <div class="form-field full-width">
-        <label>Imagen</label>
-        <div class="image-upload-wrapper">
-          <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Preview" width="120" height="120" />
-          <label for="imagen" class="image-upload-button">Insertar</label>
-        </div>
-        <input id="imagen" type="file" accept="image/*" (change)="onImageSelected($event)" />
-      </div>
-
       <mat-form-field appearance="outline">
         <mat-label>Tipo de Usuario *</mat-label>
-        <mat-select formControlName="tipoUsuario" (selectionChange)="onTipoUsuarioChange()">
-          <mat-option *ngFor="let tipo of tiposUsuario" [value]="tipo">{{ tipo }}</mat-option>
+        <mat-select
+          formControlName="tipoUsuario"
+          (selectionChange)="onTipoUsuarioChange()"
+        >
+          <mat-option *ngFor="let tipo of tiposUsuario" [value]="tipo">{{
+            tipo
+          }}</mat-option>
         </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Nombre *</mat-label>
-        <input matInput formControlName="nombre" maxlength="25">
+        <input matInput formControlName="nombre" maxlength="25" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Apellidos *</mat-label>
-        <input matInput formControlName="apellidos" maxlength="35">
+        <input matInput formControlName="apellidos" maxlength="35" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -39,106 +35,166 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Fecha de Nacimiento</mat-label>
-        <input matInput [matDatepicker]="pickerNacimiento" formControlName="fechaNacimiento">
-        <mat-datepicker-toggle matIconSuffix [for]="pickerNacimiento"></mat-datepicker-toggle>
+        <input
+          matInput
+          [matDatepicker]="pickerNacimiento"
+          formControlName="fechaNacimiento"
+        />
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="pickerNacimiento"
+        ></mat-datepicker-toggle>
         <mat-datepicker #pickerNacimiento></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Correo electrónico *</mat-label>
-        <input matInput type="email" formControlName="correo">
+        <input matInput type="email" formControlName="correo" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Teléfono</mat-label>
-        <input matInput formControlName="telefono">
+        <input matInput formControlName="telefono" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Dirección</mat-label>
-        <input matInput formControlName="direccion">
+        <input matInput formControlName="direccion" />
       </mat-form-field>
     </div>
 
     <div class="column">
+      <div class="form-field full-width">
+        <div class="image-upload-wrapper">
+          <img
+            *ngIf="imagenPreview"
+            [src]="imagenPreview"
+            alt="Preview"
+            width="120"
+            height="120"
+            (click)="triggerImageUpload()"
+          />
+        </div>
+        <input
+          id="imagen"
+          type="file"
+          accept="image/*"
+          (change)="onImageSelected($event)"
+          hidden
+          #fileInput
+        />
+        <label class="lb-img">Fotografia</label>
+      </div>
       <mat-form-field appearance="outline">
         <mat-label>Fecha de Alta *</mat-label>
-        <input matInput [matDatepicker]="pickerAlta" formControlName="fechaAlta">
-        <mat-datepicker-toggle matIconSuffix [for]="pickerAlta"></mat-datepicker-toggle>
+        <input
+          matInput
+          [matDatepicker]="pickerAlta"
+          formControlName="fechaAlta"
+        />
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="pickerAlta"
+        ></mat-datepicker-toggle>
         <mat-datepicker #pickerAlta></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Fecha de Piso</mat-label>
-        <input matInput [matDatepicker]="pickerPiso" formControlName="fechaPiso">
-        <mat-datepicker-toggle matIconSuffix [for]="pickerPiso"></mat-datepicker-toggle>
+        <input
+          matInput
+          [matDatepicker]="pickerPiso"
+          formControlName="fechaPiso"
+        />
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="pickerPiso"
+        ></mat-datepicker-toggle>
         <mat-datepicker #pickerPiso></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Fecha de Baja</mat-label>
-        <input matInput [matDatepicker]="pickerBaja" formControlName="fechaBaja">
-        <mat-datepicker-toggle matIconSuffix [for]="pickerBaja"></mat-datepicker-toggle>
+        <input
+          matInput
+          [matDatepicker]="pickerBaja"
+          formControlName="fechaBaja"
+        />
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="pickerBaja"
+        ></mat-datepicker-toggle>
         <mat-datepicker #pickerBaja></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Servicio Asociado *</mat-label>
         <mat-select formControlName="servicioAsociado">
-          <mat-option *ngFor="let servicio of servicios" [value]="servicio.id">{{ servicio.name }}</mat-option>
+          <mat-option
+            *ngFor="let servicio of servicios"
+            [value]="servicio.id"
+            >{{ servicio.name }}</mat-option
+          >
         </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline" *ngIf="esOperador || esCoordinador">
         <mat-label>Supervisor *</mat-label>
-        <input matInput formControlName="supervisor">
+        <input matInput formControlName="supervisor" />
       </mat-form-field>
 
       <mat-form-field appearance="outline" *ngIf="esOperador">
         <mat-label>Coordinador *</mat-label>
-        <input matInput formControlName="coordinador">
+        <input matInput formControlName="coordinador" />
       </mat-form-field>
 
-      <mat-form-field appearance="outline" *ngIf="esSupervisor || esCoordinador">
+      <mat-form-field
+        appearance="outline"
+        *ngIf="esSupervisor || esCoordinador"
+      >
         <mat-label>Dependientes</mat-label>
-        <input matInput formControlName="dependientes">
+        <input matInput formControlName="dependientes" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Usuario Win Conecta</mat-label>
-        <input matInput formControlName="usuarioWinConecta">
+        <input matInput formControlName="usuarioWinConecta" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Usuario Win Cliente</mat-label>
-        <input matInput formControlName="usuarioWinCliente">
+        <input matInput formControlName="usuarioWinCliente" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>EH</mat-label>
-        <input matInput formControlName="eh">
+        <input matInput formControlName="eh" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>ID Avaya</mat-label>
-        <input matInput formControlName="idAvaya">
+        <input matInput formControlName="idAvaya" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Usuario Orion</mat-label>
-        <input matInput formControlName="usuarioOrion">
+        <input matInput formControlName="usuarioOrion" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Usuario RRSS</mat-label>
-        <input matInput formControlName="usuarioRrss">
+        <input matInput formControlName="usuarioRrss" />
       </mat-form-field>
     </div>
   </div>
 
   <div class="buttons">
     <button mat-raised-button color="warn">Archivar Usuario</button>
-    <button mat-raised-button color="primary" (click)="guardarUsuario()">Guardar</button>
-    <button mat-raised-button color="primary" (click)="redictionEdit()">Agregar Rol</button>
+    <button mat-raised-button color="primary" (click)="guardarUsuario()">
+      Guardar
+    </button>
+    <button mat-raised-button color="primary" (click)="redictionEdit()">
+      Agregar Rol
+    </button>
   </div>
 </form>

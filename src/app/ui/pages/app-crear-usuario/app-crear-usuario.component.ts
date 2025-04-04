@@ -21,6 +21,7 @@ import {
   UserService,
   UserCreateRequest,
 } from '../../../infrastructure/api/usuario.service';
+import { ViewChild, ElementRef } from '@angular/core';
 import {ServicioTableItem} from '../../../domain/entities/serviciotableitem';
 import {ServicioService} from '../../../infrastructure/api/servicio.service';
 
@@ -49,17 +50,26 @@ export class AppCrearUsuarioComponent {
     private router: Router
   ) {}
 
+  @ViewChild('fileInput') fileInput!: ElementRef;
+
+  triggerImageUpload(): void {
+    this.fileInput.nativeElement.click();
+  }
+
   ngOnInit(): void {
-    this.servicioService.getServices().subscribe((data: ServicioTableItem[]) => {
-      this.servicios = data;
-    });
+    this.servicioService
+      .getServices()
+      .subscribe((data: ServicioTableItem[]) => {
+        this.servicios = data;
+      });
   }
 
   tiposUsuario = ['Operador', 'Coordinador', 'Workforce', 'Supervisor'];
   esOperador = false;
   esCoordinador = false;
   esSupervisor = false;
-  imagenPreview: string | null = null;
+  imagenPreview: string | null =
+    'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.srNFFzORAaERcWvhwgPzVAHaHa%26pid%3DApi&f=1&ipt=e8e0bd7323e72d322c8a798d09abf4b7b0822e2c8e220a2cd1ba5052029ecdc0&ipo=images';
   imagenSeleccionada: File | null = null;
   servicios: ServicioTableItem[] = [];
 
@@ -120,28 +130,36 @@ export class AppCrearUsuarioComponent {
     this.esSupervisor = tipo === 'Supervisor';
   }
 
-
   guardarUsuario() {
     if (this.usuarioForm.valid) {
       const nuevoUsuario: UserCreateRequest = {
-        type: this.getUserType(this.usuarioForm.get('tipoUsuario')?.value || ''),
+        type: this.getUserType(
+          this.usuarioForm.get('tipoUsuario')?.value || ''
+        ),
         firstname: this.usuarioForm.get('nombre')?.value || '',
         lastname: this.usuarioForm.get('apellidos')?.value || '',
         email: this.usuarioForm.get('correo')?.value || '',
         status: 1,
         gender: this.usuarioForm.get('sexo')?.value || '',
-        bornAt: this.usuarioForm.get('fechaNacimiento')?.value?.toISOString().split('T')[0] || '',
+        bornAt:
+          this.usuarioForm
+            .get('fechaNacimiento')
+            ?.value?.toISOString()
+            .split('T')[0] || '',
         country: 'España',
         phone: this.usuarioForm.get('telefono')?.value || '',
         address: this.usuarioForm.get('direccion')?.value || '',
         collaboratorId: 0,
-        serviceAssociated: Number(this.usuarioForm.get('servicioAsociado')?.value) || 0,
+        serviceAssociated:
+          Number(this.usuarioForm.get('servicioAsociado')?.value) || 0,
         coordinatorId: Number(this.usuarioForm.get('coordinador')?.value) || 0,
         supervisorId: Number(this.usuarioForm.get('supervisor')?.value) || 0,
         systemId: 0,
         modeWork: 0,
-        winUsernameConecta: this.usuarioForm.get('usuarioWinConecta')?.value || '',
-        winUsernameClient: this.usuarioForm.get('usuarioWinCliente')?.value || '',
+        winUsernameConecta:
+          this.usuarioForm.get('usuarioWinConecta')?.value || '',
+        winUsernameClient:
+          this.usuarioForm.get('usuarioWinCliente')?.value || '',
         eh: this.usuarioForm.get('eh')?.value || '',
         avayaId: Number(this.usuarioForm.get('idAvaya')?.value) || 0,
         orionUsername: this.usuarioForm.get('usuarioOrion')?.value || '',
@@ -162,7 +180,9 @@ export class AppCrearUsuarioComponent {
         },
       });
     } else {
-      console.warn('⚠️ Formulario inválido. Por favor, completa los campos requeridos.');
+      console.warn(
+        '⚠️ Formulario inválido. Por favor, completa los campos requeridos.'
+      );
     }
   }
 

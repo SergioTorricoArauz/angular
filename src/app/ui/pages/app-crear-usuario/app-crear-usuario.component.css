@@ -92,5 +92,23 @@ input[type='file'] {
 .form-field.full-width label {
   font-weight: bold;
 }
+.image-upload-wrapper img {
+  cursor: pointer;
+  border-radius: 50%;
+  /* Mantiene la imagen circular */
+  object-fit: cover;
+  width: 200px;
+  /* Cambia el ancho a 200px */
+  height: 200px;
+  /* Cambia la altura a 200px */
+  border: 2px solid #ccc;
+  /* Mantén el borde si es necesario */
+}
 
+.lb-img{
+text-align: center;
+  font-size: 16px;
+  color: #000000;
+  margin-top: 5px;
+}
 

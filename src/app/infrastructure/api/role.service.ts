@@ -7,7 +7,7 @@ import { RoleCreate, RoleResponse } from '../../dto/role';
   providedIn: 'root',
 })
 export class RoleService {
-  private readonly apiUrl = 'http://localhost:5000/api/Role';
+  private readonly apiUrl = 'http://localhost:3000/api/Role';
 
   constructor(private http: HttpClient) {}
 
@@ -27,7 +27,13 @@ export class RoleService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  createRolePermission(roleId: number, permissionIds: number[]): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/${roleId}/permissions`, permissionIds);
+  createRolePermission(
+    roleId: number,
+    permissionIds: number[]
+  ): Observable<void> {
+    return this.http.post<void>(
+      `${this.apiUrl}/${roleId}/permissions`,
+      permissionIds
+    );
   }
 }
